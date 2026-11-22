@@ -1,0 +1,48 @@
+schema_version: "1.0"
+workflow:
+  id: "bugfix"
+  name: "Bugfix Cycle"
+  version: "1.0.0"
+  author: "local"
+  description: "Runs diagnose (reproduce, root cause, failing test) → review → fix and verify → review"
+
+requires:
+  speckit_version: ">=0.8.5"
+  integrations:
+    any:
+      - "claude"
+
+inputs:
+  bug:
+    type: string
+    required: true
+    prompt: "Describe the bug (expected vs. actual, error text, steps)"
+  integration:
+    type: string
+    default: "auto"
+    prompt: "Integration to use ('auto' uses the project's initialized integration)"
+
+steps:
+  - id: diagnose
+    command: speckit.debug
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "--phase diagnose {{ inputs.bug }}"
+
+  - id: review-root-cause
+    type: gate
+    message: "Review the root cause and failing test in specs/<###-fix-*>/bugfix.md before the fix is applied."
+    options: [approve, reject]
+    on_reject: abort
+
+  - id: fix
+    command: speckit.debug
+    integration: "{{ inputs.integration }}"
+    input:
+      args: "--phase fix {{ inputs.bug }}"
+
+  - id: review-fix
+    type: gate
+    message: "Review the fix and verification results before committing."
+    options: [approve, reject]
+    on_reject: abort

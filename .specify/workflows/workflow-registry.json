@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "workflows": {
+    "speckit": {
+      "name": "Full SDD Cycle",
+      "version": "1.0.1",
+      "description": "Runs specify \u2192 plan \u2192 tasks \u2192 implement with review gates",
+      "source": "bundled",
+      "installed_at": "2026-11-04T13:42:07.915108+00:00",
+      "updated_at": "2026-11-04T13:42:07.915115+00:00"
+    },
+    "bugfix": {
+      "name": "Bugfix Cycle",
+      "version": "1.0.0",
+      "description": "Runs diagnose (reproduce, root cause, failing test) \u2192 review \u2192 fix and verify \u2192 review",
+      "source": "/private/tmp/claude-501/-Users-tommtang2106-Projects/c6a50653-8699-4521-93a9-07db8b4a54b4/scratchpad/bugfix/workflow.yml",
+      "installed_at": "2026-11-19T11:49:44.649307+00:00",
+      "updated_at": "2026-11-19T11:49:44.649485+00:00"
+    }
+  }
+}
