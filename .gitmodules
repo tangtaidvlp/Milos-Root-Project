@@ -1,0 +1,9 @@
+[submodule "milos.github.io"]
+	path = milos.github.io
+	url = https://github.com/tangtaidvlp/milos.github.io.git
+[submodule "ms-personal-routine-manager"]
+	path = ms-personal-routine-manager
+	url = https://github.com/tangtaidvlp/Milos-Personal-Routine-Assistant.git
+[submodule "ui-personal-routine-manager"]
+	path = ui-personal-routine-manager
+	url = https://github.com/tangtaidvlp/ui-personal-routine-manager.git
