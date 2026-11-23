@@ -1,5 +1,8 @@
 # Feature Request
 
+**Type**: Feature
+**Epic**: <!-- optional: F### of the parent epic -->
+
 <!--
   Describe the feature you want in plain language, then run `/speckit-specify F###` (this file's ID),
   or `/speckit-specify` with no arguments. The command reads this file as the feature description,
