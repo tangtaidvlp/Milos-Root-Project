@@ -22,7 +22,7 @@ Sync Impact Report
 - Other changes: Environments now list the `test` profile; the merge gate names
   `./gradlew build -PtestDb=postgres`.
 - Templates: .specify/templates/bugfix-template.md updated (failing component or unit test first).
-- Source: specs/F008-technical-enhancement-update-backend-testing-structure (FR-013).
+- Source: specs/.done.F008-technical-enhancement-update-backend-testing-structure (FR-013).
 - Known gaps vs. current code (fix through features/bugfixes, not this amendment):
   * Planned for production phase 1, not a defect before then: Flyway baseline from the first
     stable schema; until then tests build the schema with Hibernate, so a `db/*.sql` script

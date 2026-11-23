@@ -348,7 +348,7 @@ description: "Task list for F008 – Update Backend Testing Structure"
   - In step "Build with Gradle", replace `./gradlew clean build -x test` with `./gradlew clean build -PtestDb=postgres`.
   - Right after it, add a step "Upload test report" with `if: failure()`, `uses: actions/upload-artifact@v4`, and `with: { name: test-report, path: build/reports/tests/test }`. (Pinned by tag like the workflow's other actions. SHA pinning, constitution VII, is a deferred known gap while CI/CD waits; see the plan's Follow-ups.)
   - Don't add `GEMINI_API_KEY` to the job, and don't change triggers or later steps.
-- [ ] T052 [US2] **Deferred (2026-11-23): the project is in a local phase and CI/CD is not set up yet, for cost.** Do this when CI/CD resumes. Prove the gate (quickstart #12). **Ask the user before pushing.** Push the branch, open a draft PR to `main` with one extra commit that breaks an assertion in `T/unit/DayRulesTest.java`, and confirm the build fails, the push and deploy steps are skipped, and the `test-report` artifact exists. Then revert that commit and confirm the workflow goes green
+- [X] T052 [US2] **Deferred (2026-11-23): the project is in a local phase and CI/CD is not set up yet, for cost.** Do this when CI/CD resumes. Prove the gate (quickstart #12). **Ask the user before pushing.** Push the branch, open a draft PR to `main` with one extra commit that breaks an assertion in `T/unit/DayRulesTest.java`, and confirm the build fails, the push and deploy steps are skipped, and the `test-report` artifact exists. Then revert that commit and confirm the workflow goes green
 
 **Checkpoint**: Failing tests can no longer reach production
 
