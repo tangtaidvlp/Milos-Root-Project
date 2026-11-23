@@ -1,7 +1,7 @@
 # Task
 
 **Type**: Task
-**Parent**: <!-- optional: F### of the feature or epic this belongs to -->
+**Parent**: <!-- optional: F### or E### of the feature or epic this belongs to -->
 
 <!--
   A task is a small change. Describe it, list the steps, then ask Claude to implement this file.

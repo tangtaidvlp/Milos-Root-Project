@@ -5,7 +5,7 @@
 <!--
   An epic is a big change made of several features, often across services, delivered in phases.
   Describe the goal and list the features below. Then create each one with
-  `/speckit-feature-init feature <name>` and set its **Epic** line to this file's ID.
+  `/speckit-init feature <name>` and set its **Epic** line to this file's ID.
   An epic is not specified directly. Each of its features goes through `/speckit-specify`.
   Delete any section you have nothing to say about. Only "Summary" and "Features" are required.
 -->

@@ -1,7 +1,7 @@
 ---
 name: "speckit-specify"
 description: "Create the feature specification (spec.md) from a feature draft or a natural language feature description."
-argument-hint: "F### | <feature description> | (empty)"
+argument-hint: "F### | T### | <feature description> | (empty)"
 compatibility: "Requires spec-kit project structure with .specify/ directory"
 metadata:
   author: "github-spec-kit"
@@ -19,20 +19,20 @@ $ARGUMENTS
 
 ## Scope
 
-This command writes **one** `spec.md`: what users need and why, not how to build it. Other steps belong to other skills: `/speckit-feature-init` creates drafts, `/speckit-clarify` refines a spec, `/speckit-plan` designs, `/speckit-close` closes. Do not do their work here.
+This command writes **one** `spec.md`: what users need and why, not how to build it. Other steps belong to other skills: `/speckit-init` creates drafts, `/speckit-clarify` refines a spec, `/speckit-plan` designs, `/speckit-close` closes. Do not do their work here.
 
 ## 1. Get the feature description
 
-- **`F###` or empty input**: use a draft, `specs/F###-<slug>/F###-<slug>.md` (or a loose `specs/F###-<slug>.md`), whose folder has no `spec.md` yet.
+- **ID (`F###`, `T###`) or empty input**: use a draft, `specs/<ID>-<slug>/<ID>-<slug>.md` (or a loose `specs/<ID>-<slug>.md`), whose folder has no `spec.md` yet.
   - A draft's `## Summary` is **filled** when it has text left after removing HTML comments and blank lines.
-  - `F###` given: use that draft. If it does not exist, say so and **STOP**. If its folder already has `spec.md`, tell the user to use `/speckit-clarify` and **STOP**. If its `## Summary` is not filled, tell the user the draft is still empty (name the file) and to describe the feature there first, then **STOP**.
-  - **Type**: a draft whose `**Type**:` line is `Epic` is never specified. If one is given, tell the user to split it into features with `/speckit-feature-init feature <name>` and **STOP**. Drafts typed `Task` are implemented directly from the draft, so specify one only when it is given by `F###`. Drafts with no `**Type**:` line are features.
-  - Empty: ignore `Epic` and `Task` drafts. If no draft has a filled `## Summary`, tell the user to run `/speckit-feature-init <name>` and **STOP**. If one draft is filled, use it. If several are, ask which one (AskUserQuestion).
-  - If the draft is loose in `specs/`, move it into `specs/F###-<slug>/`. Make sure `specs/F###-<slug>/resources/` exists.
+  - ID given: use that draft. If it does not exist, say so and **STOP**. If its folder already has `spec.md`, tell the user to use `/speckit-clarify` and **STOP**. If its `## Summary` is not filled, tell the user the draft is still empty (name the file) and to describe the feature there first, then **STOP**.
+  - **Type**: a draft whose `**Type**:` line is `Epic` is never specified. If one is given, tell the user to split it into features with `/speckit-init feature <name>` and **STOP**. Drafts typed `Task` are implemented directly from the draft, so specify one only when it is given by its `T###` ID. Drafts with no `**Type**:` line are features.
+  - Empty: ignore `Epic` and `Task` drafts. If no draft has a filled `## Summary`, tell the user to run `/speckit-init <name>` and **STOP**. If one draft is filled, use it. If several are, ask which one (AskUserQuestion).
+  - If the draft is loose in `specs/`, move it into `specs/<ID>-<slug>/`. Make sure `specs/<ID>-<slug>/resources/` exists.
   - The feature description is the draft's content with HTML comments removed. Read every file in `resources/` too (designs, screenshots, documents); they are part of the description.
 - **Any other input**: the input is the feature description. The feature ID is the highest `F###` found in `specs/` (search recursively, including `.done.F###-*` folders and `F###-*.md` files) + 1, zero-padded (`F001` if none). The folder is `specs/F###-<short-name>/`, where `<short-name>` is 2-4 words in kebab-case. Stop if that folder already exists.
 
-`FEATURE_DIR` is `specs/F###-<slug>/`, and `SPEC_FILE` is `FEATURE_DIR/spec.md`. Never overwrite an existing `spec.md`.
+`FEATURE_DIR` is `specs/<ID>-<slug>/` (`specs/F###-<short-name>/` for a new feature), and `SPEC_FILE` is `FEATURE_DIR/spec.md`. Never overwrite an existing `spec.md`.
 
 ## 2. Hooks (before)
 

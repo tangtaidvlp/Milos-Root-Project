@@ -1,7 +1,7 @@
 # Feature Request
 
 **Type**: Feature
-**Epic**: <!-- optional: F### of the parent epic -->
+**Epic**: <!-- optional: E### of the parent epic -->
 
 <!--
   Describe the feature you want in plain language, then run `/speckit-specify F###` (this file's ID),

@@ -1,7 +1,7 @@
 ---
 name: "speckit-close"
 description: "Close a finished feature or bugfix: rename specs/<dir>/ to specs/.done.<dir>/ so agents skip it, fix path references, and clear the active feature pointer."
-argument-hint: "F### | <spec dir name> | (empty = current feature) [--force]"
+argument-hint: "<ID: E###|F###|T###> | <spec dir name> | (empty = current feature) [--force]"
 compatibility: "Requires spec-kit project structure with .specify/ directory"
 metadata:
   author: "local"
@@ -17,7 +17,7 @@ disable-model-invocation: true
 $ARGUMENTS
 ```
 
-The input is one or more targets separated by spaces, plus an optional `--force` flag. A target is a feature ID (`F005`), a spec number (`003`), or a directory name under `specs/` (`002-onboarding-instruction`). If no target is given, the target is the directory in `.specify/feature.json`.
+The input is one or more targets separated by spaces, plus an optional `--force` flag. A target is a work-item ID (`F005`, `T001`, `E001`), a spec number (`003`), or a directory name under `specs/` (`002-onboarding-instruction`). If no target is given, the target is the directory in `.specify/feature.json`.
 
 ## Why
 
@@ -30,7 +30,7 @@ A spec folder whose name starts with `.done.` is closed. Agents ignore it unless
 2. **Check that each target is finished.** Unless `--force` was given:
    - If `tasks.md` exists, list every unchecked task (`- [ ]`).
    - If `bugfix.md` exists, read its `**Status**:` line. Only `Fixed` counts as finished.
-   - If the folder has a draft (`F###-*.md`) but no `spec.md`, it was never specified. Skip this check for drafts whose `**Type**:` is `Epic` or `Task`, since those are never specified. For a `Task` draft, list its unchecked steps (`- [ ]`) instead.
+   - If the folder has a draft (`E###-*.md`, `F###-*.md` or `T###-*.md`) but no `spec.md`, it was never specified. Skip this check for drafts whose `**Type**:` is `Epic` or `Task`, since those are never specified. For a `Task` draft, list its unchecked steps (`- [ ]`) instead.
    If any of these apply, show what is unfinished and ask the user with AskUserQuestion whether to close it anyway or skip it. Do not tick tasks or change the status yourself.
 
 3. **Rename.** For each target, run `mv specs/<dir> specs/.done.<dir>` from the repo root. Never delete, merge or edit the folder's contents.
