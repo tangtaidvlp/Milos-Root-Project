@@ -7,4 +7,4 @@ Host on Amazon S3
 Cloud-front for CDN (but is it necessary?): Answer:
 
 Comment only, no values
-java -DGEMINI_API_KEY=AIzaSyCoKEqcmzDpp5qtqiqiAfoLaVnDN6gMVRg -jar release/routinemanager-0.0.3-SNAPSHOT.jar
+java 
