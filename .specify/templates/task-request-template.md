@@ -14,10 +14,6 @@
 <!-- What should change, and why? -->
 
 
-## Steps
-
-- [ ] 
-
 ## Done when
 
 - 

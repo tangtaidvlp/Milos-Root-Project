@@ -12,15 +12,12 @@
 ## Summary
 
 <!-- What should change, and why? -->
+Enhance smoothness of Dashboard sync in Reflection mode
 
-
-## Steps
-
-- [ ] 
 
 ## Done when
 
-- 
+- I test them and feel smooth, I will tell you
 
 ## Notes
 
