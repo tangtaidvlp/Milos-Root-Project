@@ -5,8 +5,7 @@
   or `/speckit-specify` with no arguments. The command reads this file as the feature description,
   writes `spec.md` next to this file in the same `specs/F###-<slug>/` folder.
   Put mockups, screenshots and other reference files in this folder's `resources/` subfolder; Claude reads them as part of the request.
-  Claude discusses open questions with you and keeps its understanding, plan and decisions in a
-  "Claude Working Notes" section at the end of this file. Edit your sections; leave that one to Claude.
+  Claude asks up to 5 questions about open decisions and records the answers under "Clarifications" in spec.md.
   Focus on WHAT and WHY. Leave HOW (tech stack, APIs, code) to `/speckit-plan`.
   Delete any section you have nothing to say about. Only "Summary" is required.
 -->

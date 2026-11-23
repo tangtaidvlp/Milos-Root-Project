@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spec Kit Feature Loop</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: single reading column; the diagram is the hero, reference tables follow. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --fg: #1b1f27;
+  --muted: #5a6272;
+  --line: #d9dde5;
+  --accent: #2f5bd3;
+  --new: #b25a00;
+  --new-soft: #fff3e3;
+  --font-display: "Space Grotesk", "IBM Plex Sans", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151b; --surface: #1a1e26; --fg: #e6e9ef; --muted: #9aa3b4;
+    --line: #2c323d; --accent: #7fa2ff; --new: #ffb357; --new-soft: #2e2416;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151b; --surface: #1a1e26; --fg: #e6e9ef; --muted: #9aa3b4;
+  --line: #2c323d; --accent: #7fa2ff; --new: #ffb357; --new-soft: #2e2416;
+  color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--fg);
+  font: 15px/1.6 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 64px;
+}
+.wrap { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 36px; }
+h1, h2 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+h1 { font-size: 2rem; font-weight: 600; letter-spacing: -0.01em; }
+h2 { font-size: 1.25rem; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--muted); }
+header { display: flex; flex-direction: column; gap: 10px; }
+code { font-family: var(--font-mono); font-size: 0.88em; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 20px; font-size: 13px; color: var(--muted); }
+.chip { display: inline-flex; align-items: center; gap: 8px; }
+.sw { width: 18px; height: 12px; border-radius: 3px; border: 1.5px solid var(--muted); }
+.sw.new { border: 1.5px dashed var(--new); background: var(--new-soft); }
+.diagram {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 20px; overflow-x: auto;
+}
+.diagram pre { margin: 0; min-width: 640px; }
+section { display: flex; flex-direction: column; gap: 14px; }
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 14px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 500; }
+td:first-child { font-weight: 600; white-space: nowrap; }
+.tag { font-family: var(--font-mono); font-size: 12px; color: var(--new); border: 1px dashed var(--new); background: var(--new-soft); border-radius: 4px; padding: 1px 6px; margin-left: 6px; white-space: nowrap; }
+.files { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.file { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.file code { color: var(--accent); overflow-wrap: anywhere; }
+.file span { color: var(--muted); font-size: 14px; }
+</style>
+</head><body>
+
+<div class="wrap">
+  <header>
+    <h1>Spec Kit Feature Loop</h1>
+    <p class="lede">The full path of one feature in the Personal Routine Manager workspace, from draft to close, including the feedback loop after implementation. Dashed orange steps are proposed and don't exist yet.</p>
+    <div class="legend">
+      <span class="chip"><span class="sw"></span>Existing skill or step</span>
+      <span class="chip"><span class="sw new"></span>Proposed: <code>/speckit-iterate</code>, UI design check, P1 checkpoint</span>
+    </div>
+  </header>
+
+  <div class="diagram">
+<pre class="mermaid">
+flowchart TD
+  A["/speckit-feature-init<br/>draft + resources/"] --> B["/speckit-specify<br/>up to 5 questions → spec.md"]
+  B --> C["/speckit-clarify (optional)<br/>up to 5 more questions"]
+  C --> D["/speckit-plan<br/>plan, data model, contracts"]
+  D --> G{"Has UI and no<br/>mockup in resources/?"}
+  G -- yes --> W["Wireframe<br/>(ASCII or Figma)"]
+  W --> WA{"You approve?"}
+  WA -- no, revise --> W
+  WA -- yes --> T
+  G -- no --> T["/speckit-tasks"]
+  T --> AN["/speckit-analyze<br/>spec ↔ plan ↔ tasks"]
+  AN --> I1["/speckit-implement<br/>P1 story"]
+  I1 --> CP{"Checkpoint:<br/>you try P1"}
+  CP -- looks right --> I2["/speckit-implement<br/>P2 … Pn"]
+  I2 --> R{"You review the<br/>finished feature"}
+  R -- accepted --> Z["/speckit-close"]
+
+  CP -- issues --> IT
+  R -- issues --> IT["/speckit-iterate F###<br/>list feedback, log round in feedback.md"]
+  IT --> K{"Sort each item"}
+  K -- "bug: code ≠ spec" --> BG["/speckit-debug<br/>failing test → fix"]
+  K -- "spec gap" --> SP["Update spec.md<br/>new Clarifications session"]
+  K -- "change of mind" --> SP
+  K -- "too big: new scope" --> NF["New feature<br/>/speckit-feature-init"]
+  SP --> RP["Adjust plan.md if needed"]
+  RP --> AT["Add tasks to tasks.md<br/>(converge-style)"]
+  AT --> IN["/speckit-implement<br/>new tasks only"]
+  BG --> R
+  IN --> R
+
+  classDef proposed stroke-dasharray: 5 4,stroke-width:2px,stroke:#d9822b;
+  class G,W,WA,CP,IT,K,SP,RP,AT,IN proposed
+</pre>
+  </div>
+
+  <section>
+    <h2>Three kinds of feedback</h2>
+    <p class="lede">The first step of <code>/speckit-iterate</code> is to sort each item. The fix depends on whether the code, the spec, or your mind is what changed.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Kind</th><th>Example</th><th>What it means</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td>Bug</td><td>The Save button does nothing</td><td>The code doesn't do what the spec says</td><td><code>/speckit-debug</code>: failing test, then fix. Spec unchanged.</td></tr>
+          <tr><td>Spec gap<span class="tag">new</span></td><td>The routine form was built without a mockup</td><td>The spec never said, so Claude guessed</td><td>Add the decision to <code>spec.md</code>, adjust the plan, add tasks, build them</td></tr>
+          <tr><td>Change of mind<span class="tag">new</span></td><td>Seeing it, you want a drawer, not a modal</td><td>The spec was followed, but you now want something else</td><td>Change <code>spec.md</code> and record why, then rework the affected tasks</td></tr>
+          <tr><td>New scope</td><td>"Also add sharing with friends"</td><td>Not part of this feature</td><td>Start a new feature with <code>/speckit-feature-init</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Where each round is recorded</h2>
+    <div class="files">
+      <div class="file"><code>specs/F###-*/feedback.md</code><span>One section per round: each item, its kind, the decision, and what changed. Proposed.</span></div>
+      <div class="file"><code>spec.md → ## Clarifications</code><span>A new <code>### Session YYYY-MM-DD</code> for each round that changes the spec, so clarify never asks again.</span></div>
+      <div class="file"><code>tasks.md</code><span>New tasks are added at the end, never rewritten, so you can see what came from feedback.</span></div>
+      <div class="file"><code>resources/</code><span>Approved wireframes and mockups live here and become the design reference for the spec.</span></div>
+    </div>
+  </section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default" });</script>
+</body></html>
