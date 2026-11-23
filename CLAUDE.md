@@ -50,5 +50,5 @@ Bugs are defined in AI-project-docs/bugs folder
 Whenever solve a bug, rename it from bugxxx -> .done.bugxxx
 During working, ignore bugs with done. postfix
 ### Engineering standards
-- `.specify/memory/constitution.md` is the source of truth for engineering rules (API contracts, testing, migrations, security, AI guardrails, accessibility, CI). It is based on OWASP ASVS, the OWASP Top 10 for LLM Applications, RFC 9457, RFC 10017 and WCAG 2.2 AA. Subproject `CLAUDE.md` files and `codingrules.md` must not contradict it.
+- `.specify/memory/constitution.md` is the source of truth for engineering rules (API contracts, testing, migrations, security, AI guardrails, accessibility, CI). It is based on OWASP ASVS, the OWASP Top 10 for LLM Applications, RFC 10017 and WCAG 2.2 AA. Errors use the project's one `ApiError` body, not RFC 9457. Subproject `CLAUDE.md` files and `codingrules.md` must not contradict it.
 - Its Sync Impact Report lists where the current code doesn't meet it yet. Don't copy those patterns into new code; fix them when you touch that code.

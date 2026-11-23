@@ -1,5 +1,48 @@
 <!--
 Sync Impact Report
+- Version change: 1.0.0 → 2.0.0 (MAJOR: Principles I and II redefined, III phased)
+- Modified principles:
+  I. "Contract-First API Design (RFC 9457 errors)" → "Contract-First API Design". Errors use
+      the one `ApiError` body the backend and frontend already share (`status`, `error`,
+      `message`, `timestamp`) instead of RFC 9457 Problem Details: the extra format added code
+      and a frontend change for no user benefit (owner decision, F008).
+  II. "Test Pyramid with Real Infrastructure" → "Component-First Testing with Real
+      Infrastructure". The backend default moves from "most tests are unit tests" to component
+      tests per main user flow, unit tests per core business rule (edge cases), and at most
+      10 integration tests for external connections. Every refusal test checks the full
+      error body shape, not only the status. The frontend bullet now names the testing-trophy
+      layers (unit tests for all pure logic, component tests only for complex widgets, 5–10
+      Playwright journeys); "Vitest for frontend logic" moved there from the old first
+      bullet. The bug-fix rule covers integration and frontend bugs.
+  III. Schema rules are phased (owner decision, F008): until production phase 1, Hibernate
+      `ddl-auto` builds the schema and `db/<feature>.sql` scripts cover the prod database.
+      Flyway arrives with the first stable schema; from then on migrations are mandatory and
+      tests build the schema with them (this restores the 1.0.0 "same migrations as
+      production" rule, which the first 2.0.0 draft had dropped).
+- Other changes: Environments now list the `test` profile; the merge gate names
+  `./gradlew build -PtestDb=postgres`.
+- Templates: .specify/templates/bugfix-template.md updated (failing component or unit test first).
+- Source: specs/F008-technical-enhancement-update-backend-testing-structure (FR-013).
+- Known gaps vs. current code (fix through features/bugfixes, not this amendment):
+  * Planned for production phase 1, not a defect before then: Flyway baseline from the first
+    stable schema; until then tests build the schema with Hibernate, so a `db/*.sql` script
+    that doesn't match the entities is not caught by any test (II, III)
+  * JWT signing key generated in memory, lost on restart; logout does not revoke the
+    refresh token; refresh-token lifetime uses the access-token expiry (IV)
+  * Default/daily routine endpoints don't check that the routine belongs to the caller (IV)
+  * The `prod` profile (open-in-view off) can't serialise routine entities; JPA entities are
+    still returned directly instead of DTOs (I)
+  * GitHub Actions pinned by tag, not commit SHA (including the test-report upload step F008
+    added); AWS access may use static keys (VII). Deferred: the project is in a local phase
+    and CI/CD hardening waits, for cost.
+  * The EC2 backend runs the `test` profile, which enables the cron support endpoint, and the
+    CI deploy step sets no profile (IV; bug-0007)
+  * No Actuator/structured logging baseline confirmed (VIII)
+- Closed since 1.0.0: backend CI now runs all tests (Testcontainers PostgreSQL) before deploy (II, VII);
+  the "not RFC 9457" gap is gone with the Principle I change, and the security layer's 401 now
+  returns `ApiError` too (it had an empty body) (I)
+
+Previous report (1.0.0):
 - Version change: (unversioned template) → 1.0.0 (first ratification; an earlier same-day draft
   was never committed and is replaced wholesale)
 - Principles (all new):
@@ -39,40 +82,70 @@ The backend and frontend deploy independently (EC2 vs. GitHub Pages) and share o
   written, including request, response, error cases and status codes.
 - Request/response bodies MUST be dedicated DTOs (Java records preferred); JPA entities MUST NOT
   be serialised directly in new code. Server-computed fields are read-only and ignored on input.
-- Error responses MUST use RFC 9457 Problem Details (`application/problem+json`, Spring
-  `ProblemDetail`) with correct status semantics: 400 validation, 401 unauthenticated,
-  403 forbidden, 404 missing or not owned, 409 conflict, 503 upstream (AI) failure. Problem
-  bodies MUST NOT leak stack traces, SQL or class names.
+- Every error response MUST use the one error body, `ApiError`: a JSON object with exactly
+  `status` (number), `error` (reason phrase), `message` (short text the UI shows) and
+  `timestamp` (ISO-8601), including errors raised by the security layer. Status codes follow
+  their meaning: 400 validation, 401 unauthenticated, 403 forbidden, 404 missing or not owned,
+  409 conflict, 503 upstream (AI) failure. Error bodies MUST NOT leak stack traces, SQL or
+  class names. No second error format (such as RFC 9457 Problem Details) is introduced.
 - Changes MUST be backward compatible with the currently deployed frontend; breaking changes
   require a new versioned path or an expand/contract rollout (backend first, then UI, then removal).
 - Backend and frontend changes to one contract land in the same feature; mirrored registries
   (task palette, user settings schema, AI tool hints) MUST be updated together.
 
 Rationale: independent deploys make contract drift a production bug unless it is designed out.
-Source: RFC 9457; Spring Framework "Error Responses" reference.
+Source: Spring Framework "Error Responses" reference.
 
-### II. Test Pyramid with Real Infrastructure
+### II. Component-First Testing with Real Infrastructure
 
-- Most tests are fast unit tests of domain/service logic (JUnit 5; Vitest for frontend logic).
-- Persistence, transactions and queries MUST be verified with integration tests against
-  PostgreSQL via Testcontainers, running the same migrations as production. H2 MAY be used for
-  quick local runs but MUST NOT be the only evidence for database behaviour.
-- Web-layer contracts MUST be covered by slice or MockMvc tests asserting status codes and
-  Problem Details bodies.
-- Frontend components are tested by user-visible behaviour (Testing Library: roles, labels,
-  text), not implementation details; critical journeys are covered by Playwright e2e.
-- Every bug fix MUST begin with a failing regression test.
+- Backend tests come in three kinds, each in its own package and naming:
+  - **Component tests** (default): every main user flow is tested through the public API with
+    the whole backend running, including security with real sign-in tokens. They check status,
+    response body and stored data for the success path and the main refusals. Every refusal
+    (4xx/5xx) check in component and integration tests MUST also check the full `ApiError`
+    body shape (Principle I), not only the status code. Only external
+    services (the AI provider, via the mock implementation) and the clock are controlled.
+  - **Unit tests**: every core business rule (calculations, state transitions, parsing, rule
+    decisions) and its edge cases, with no Spring context and no database. Storage MUST NOT be
+    mocked; rules tangled with storage are separated first, without behaviour change.
+  - **Integration tests** (at most 10): each checks one external connection (PostgreSQL-only
+    behaviour, the security setup, a provider interface) against the real piece or a faithful
+    local stand-in.
+- All component and integration tests share one Spring context; no per-class configuration,
+  mock beans or `@DirtiesContext`.
+- H2 MAY be used for local component-test runs only. CI MUST run every test against PostgreSQL
+  via Testcontainers, and PostgreSQL-only tests are skipped (never passed) on H2. Tests build
+  the schema the way Principle III prescribes for the current phase: Hibernate until production
+  phase 1, the production Flyway migrations after it.
+- Frontend tests follow the testing trophy (details in the frontend `CLAUDE.md`, "Testing
+  strategy"): strict TypeScript and lint first; every pure logic unit (functions, reducers,
+  schemas) MUST have Vitest unit tests covering its edge cases; Testing Library component
+  tests only for complex widgets, by user-visible behaviour (roles, labels, text), with the
+  backend faked at the feature's API module; 5–10 Playwright e2e tests cover the core
+  journeys. No snapshot tests and no coverage targets.
+- Every bug fix MUST begin with a failing test at the level where the bug lives. Backend: a
+  component test for a user-flow bug, a unit test for a core-business-rule bug, an integration
+  test for an external-connection bug (PostgreSQL-only behaviour, security setup). Frontend: a
+  unit test for a logic bug, a component test for a widget bug, a Playwright test for a
+  journey bug.
 - Tests MUST be deterministic and offline: inject `Clock` for dates, seed randomness, and use the
   mock AI implementation; no test may call a live LLM.
 
-Rationale: tests that mock away the database or the clock give false confidence; real
-dependencies in containers catch dialect, locking and migration issues before production.
+Rationale: a test of a whole flow through real infrastructure catches what users would hit
+(mapping, validation, security, transactions, SQL); small rule tests keep edge cases fast and
+readable; mocks of our own code give false confidence.
 
 ### III. Versioned, Backward-Compatible Data Changes
 
-- Schema changes MUST be versioned migrations (Flyway) committed with the code and executed
-  automatically on startup or in the deploy pipeline, and tested in CI against PostgreSQL.
-  Production keeps `ddl-auto: validate`; Hibernate MUST NOT generate schema outside `fast`/tests.
+- **Until production phase 1** (current local phase): Hibernate `ddl-auto` MAY build and
+  update the schema so the model can change quickly. A change the `prod` database needs (it
+  runs `ddl-auto: validate`) ships as an idempotent `db/<feature>.sql` script, applied before
+  the new image starts.
+- **From production phase 1:** Flyway is adopted with the first stable schema as its baseline
+  migration. From then on, schema changes MUST be versioned Flyway migrations committed with
+  the code and executed automatically on startup or in the deploy pipeline. Production keeps
+  `ddl-auto: validate`, and Hibernate MUST NOT generate schema outside `fast`. CI tests MUST
+  build the schema with the same migrations as production, not with Hibernate.
 - Changes MUST follow expand → migrate → contract: add new structures alongside old ones, deploy
   code that works with both, backfill, then remove the old structure in a later release. Renames,
   type changes and new `NOT NULL` constraints are never done in one step.
@@ -214,8 +287,8 @@ change than before.
 - Frontend: React 19, TypeScript (strict), Vite 8, React Router 7 with `HashRouter` for
   GitHub Pages, plain CSS with design tokens, Vitest + Testing Library + Playwright, oxlint,
   pnpm.
-- Environments: `fast` (H2, no auth, local only), `local` (PostgreSQL, no auth), `sit` and
-  `prod` (auth on).
+- Environments: `fast` (H2, no auth, local only), `local` (PostgreSQL, no auth), `test` (auth on;
+  the automated test suite, and the EC2 backend today), `sit` and `prod` (auth on).
 - Deploy: backend image → AWS ECR → EC2 behind Nginx (TLS, `/api/*` reverse proxy); frontend
   `dist/` → `milos.github.io`. Generated output is never hand-edited.
 - Replacing a core technology (framework, database, AI provider, router mode, hosting) requires
@@ -228,7 +301,8 @@ change than before.
 - Bugs follow reproduce → root cause → failing regression test → fix → verify, with a report at
   `specs/###-fix-*/bugfix.md`; fixes needing schema or breaking API changes go through
   `/speckit-specify`.
-- Merge gate (enforced in CI): backend `./gradlew build` including Testcontainers tests;
+- Merge gate (enforced in CI): backend `./gradlew build -PtestDb=postgres` (all tests on
+  Testcontainers PostgreSQL);
   frontend `pnpm build`, `pnpm lint`, `pnpm test`; Playwright e2e for touched journeys;
   dependency vulnerability scan.
 - Changes are reviewed before merge (pull request, or a recorded `/code-review` for solo work)
@@ -252,7 +326,7 @@ change than before.
   or through a dedicated feature or bugfix. Known gaps are tracked in the Sync Impact Report
   until resolved.
 - External standards referenced here (OWASP ASVS, OWASP Top 10 for LLM Applications,
-  RFC 9457, RFC 10017, WCAG 2.2) are reviewed yearly; adopting a newer edition is a MINOR
+  RFC 10017, WCAG 2.2) are reviewed yearly; adopting a newer edition is a MINOR
   amendment.
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-22 | **Last Amended**: 2026-11-22
+**Version**: 2.0.0 | **Ratified**: 2026-11-22 | **Last Amended**: 2026-11-23

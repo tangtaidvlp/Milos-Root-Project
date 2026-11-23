@@ -45,7 +45,20 @@
 
 ## 5. Regression Test
 
+<!--
+  Write this test BEFORE changing production code (constitution Principle II).
+  Backend: a bug in a user flow → a component test in component/<Flow>ComponentTest
+  (extends BaseComponentTest, goes through the API with a real token); a bug in a core
+  business rule → a unit test in unit/<Rule>Test (no Spring, no mocked storage).
+  Run it alone: ./gradlew test --tests '*<Class>'  (add -PtestDb=postgres for database bugs).
+  Frontend: a Vitest/Testing Library test, or a Playwright e2e for a journey bug.
+-->
+
+**Test kind**: [Backend: Component (user flow) | Unit (core rule) | Integration (external connection). Frontend: Unit (logic) | Component (complex widget) | Playwright (journey)]
+
 **Test**: [path/to/Test.java#methodName, or the manual check if no test framework applies]
+
+**Command**: [e.g. `./gradlew test --tests '*SignInComponentTest'`, `pnpm test src/features/palette`, `pnpm test:e2e e2e/reflection.spec.ts`]
 
 **Failed before fix**: [Yes: failure output excerpt]
 
@@ -62,7 +75,7 @@
 ## 7. Verification
 
 - [ ] Regression test passes
-- [ ] Full test suite for the affected project passes (or failures shown to be unrelated)
+- [ ] Full test suite for the affected project passes (or failures shown to be unrelated); backend: `./gradlew test` and, for database-related bugs, `./gradlew test -PtestDb=postgres`
 - [ ] Lint/build passes for the affected project
 - [ ] Original reproduction steps no longer show the bug
 - [ ] API contract still aligned between backend and frontend (if a request/response shape changed)
