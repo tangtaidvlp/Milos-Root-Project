@@ -128,3 +128,21 @@ ui-personal-routine-manager/
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |---|---|---|
 | Input is validated by a shared rule (`GoalRules` → 400 `ApiError`), not by Bean Validation annotations (Principle IV wording) | The REST API and Buddy's tool need the same trim and length rule. Bean Validation errors pass through `handleExceptionInternal` with `ex.getMessage()`, which leaks class and field internals (Principle I) | Bean Validation alone doesn't cover the tool and gives no user-facing message. Overriding the shared handler for this one feature widens the change. This matches the F006 settings precedent |
+
+## Iteration 2026-11-24: Buddy chat on Personal Target (US4, FR-017–FR-019)
+
+- **Backend**: a new `PERSONAL_TARGET` chat conversation, one per user. `POST /api/ai/chat/personal-target/{userId}` and `GET …/messages` work like the reflection chat ([personal-target-chat-api.md](contracts/personal-target-chat-api.md)). A new `PersonalTargetAiService` (Gemini + mock) uses its own client with **no** default tools; it has only the per-call `GoalProposalTool`, so it can't touch the plan. `BuddyCall.PERSONAL_TARGET_CHAT` (deep, can propose) feeds the goals, tone and time blocks.
+- **Frontend**: `PersonalTargetPage` puts the shared `BuddyChat` beside the cards (phone: goals ⇄ chat toggle). `GoalProposalCard`/`BuddyChat` get an `onGoalSaved` callback, so a confirmed goal reloads the list.
+- **Prod schema**: `db/F013-personal-goals.sql` adds the unique index for one personal-target conversation per user.
+- **Constitution check**: unchanged, all PASS. V (least agency): this chat has no plan tools; the user id comes from the path guard, never from the model.
+
+New and changed files: `model/ChatConversationType` (+ `PERSONAL_TARGET`), `model/ChatConversation` (+ `forPersonalTarget`), `repository/ChatConversationRepository` (+ `findByUser_IdAndType`), `service/chat/ChatConversationService`, `service/BuddyCall`, `service/PersonalTargetAiService` + `GeminiPersonalTargetAiService` + `MockPersonalTargetAiService`, `dto/PersonalTargetChatRequest`, `api/AIController`; `features/personal-target/api/personalTargetChat.ts`, `pages/PersonalTargetPage.tsx`, `components/GoalProposalCard.tsx`, `onboarding/components/BuddyChat.jsx`, `App.css`.
+
+## Iteration 2026-11-24: Buddy reviews goals before saving (US5, FR-020–FR-026)
+
+- **Where**: the goals API save itself (`PersonalGoalService.create/update`), so the page and confirmed chat proposals are both checked and nothing skips it.
+- **Order**: text rules (400) → for create, a cheap limit pre-check (409) / for update, the owned goal (404) and "nothing changed" (saved without a check) → Buddy's review, **outside** any transaction, so no row lock is held during the AI call → the existing locked write.
+- **Reviewer**: a new `GoalReviewer` (Gemini + mock). Gemini uses its own tool-less client and structured output; the pure `funcs/GoalReviewRules` cleans its answer (reason length, suggestion must pass `GoalRules`). A failure or empty answer → 503, nothing saved. The mock refuses text containing "impossible", so tests and e2e can show a refusal.
+- **Contract**: POST/PUT return `GoalSaveView { goal, review }`. Saved → `goal` (201 POST / 200 PUT). Refused → 200 with `review { reason, suggestion }` and `goal: null`. A refusal isn't an `ApiError` because the one error body has exactly four fields and can't carry the suggestion ([research.md](research.md) R12, [goals-api.md](contracts/goals-api.md)).
+- **Frontend**: `GoalForm` shows "Buddy is checking your goal…", then Buddy's reason with a "Use suggestion" button; `GoalProposalCard` shows a refusal as final.
+- **Constitution check**: I (contract first; one error body kept), II (unit test for the clean-up rule, component test for the flow), IV/V (goal text is data; no tools; the server enforces), VIII (no goal text logged at INFO): PASS.

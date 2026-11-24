@@ -60,12 +60,13 @@ Streak-Break / Off-Track: Strictly non-punitive. Avoids guilt-tripping language 
 
 | Phase | ID | Feature | Scope |
 |---|---|---|---|
-| 1 | [F013](../F013-personal-goals/spec.md) | Personal goals | "Personal Target" page with up to 3 goals (goal + what Buddy should help with). Buddy uses them in every chat and can propose goal changes that the user confirms. |
+| 1 | [F013](../F013-personal-goals/spec.md) | Personal goals | "Personal Target" page with up to 3 goals (goal + what Buddy should help with). Buddy uses them in every chat and can propose goal changes that the user confirms. The page has its own Buddy goals chat (US4), and Buddy checks every new or changed goal is realistic and safe before it's saved (US5); both added 2026-11-24. |
 | 2 | [F014](../F014-buddy-tone/spec.md) | Buddy tone | User picks Balanced (default) or one of the 5 archetypes on the Personal Target page. Each tone is a fixed preset of the 4 axes. Buddy never uses guilt-tripping language. |
 | 3 | [F015](../F015-context-aware-tone/spec.md) | Context-aware tone | Buddy adjusts the chosen tone to the user's time of day (morning / midday / evening) and keeps replies short in day-to-day chat, saving longer coaching for planning and reflection. |
 | Later | — | Off-track tone | Data-driven off-track / streak-break detection. Waits for analytics metrics (decided 2026-11-24). |
+| Later | — | Buddy on Analytics | Same Buddy chat with an Analytics setup (history, instructions, tools), built with the Analytics feature. Possible later step: one shared chat on every screen, with only Buddy's context changing (decided 2026-11-24). |
 
-**Status (2026-11-24)**: F013, F014 and F015 are implemented on branch `feat/E001-personal-target` in both repos (not committed). All automated gates pass. The manual test with real Gemini (each feature's quickstart) is still open before the features are closed.
+**Status (2026-11-24)**: F013, F014 and F015 are implemented on branch `feat/E001-personal-target` in both repos, with PRs open. The F013 iterations (Buddy chat on Personal Target; Buddy checks goals on save) are done but not committed yet. All automated gates pass. The manual test with real Gemini (each feature's quickstart) is still open before the features are closed.
 
 ## Services affected
 
@@ -86,3 +87,13 @@ This feature is integrated, all testing done, manual testing from me
 ## Notes / Open Questions
 
 Ask as much as question you need
+
+### Open questions (2026-11-24, after the F013 iteration)
+
+1. **Push the iterations?** The Buddy chat on Personal Target and the goal check on save are uncommitted in all three repos. Should I commit it and push it to the open E001 PRs (backend #3, UI #3, root #1)? Recommended: yes, one commit per repo.
+2. **Existing chats return 500 when the AI fails.** The constitution requires 503 with a friendly message. The new goals chat already does this; the Today, Default routine and Reflection chats don't. Fix them in E001 (small, about 3 handlers + tests), or file a bug? Recommended: file a bug, keep E001 focused.
+3. **No per-user AI rate limit.** The constitution asks for per-user rate/cost limits on AI calls; no AI endpoint has one, including the new goals chat. File a bug? Recommended: yes, before production.
+
+4. **Goal saves while Buddy is down.** You chose "block until fixed", so when Buddy can't answer, no goal can be saved (503). With today's rejected key, that means every AI-on run, probably including your local default profile. Keep it strict, or save the goal unchecked when Buddy can't answer (Buddy's refusals still block)? Recommended: save unchecked during an outage, so an AI outage never locks users out of their own goals.
+
+Needs from you (not questions): a valid `GEMINI_API_KEY` (the current one is rejected), then the manual checks in each quickstart, including F013 E1–E4 and F1–F6. Until then, run the backend with `SPRING_AI_ACTIVE=false` to save goals locally (the mock reviewer accepts everything except text with "impossible").

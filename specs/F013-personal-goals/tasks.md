@@ -184,6 +184,49 @@ description: "Tasks for F013 Personal Goals"
 
 **Results (2026-11-24)**: backend `./gradlew build -PtestDb=postgres` passes 178/178; frontend lint (no new warnings), build and 208 unit/component tests pass; Playwright 9/9 journeys pass, including `personal-target`. Quickstart C1–C4 and D1–D6 need real Gemini and are left for the user's manual check.
 
+
+## Phase 7: Iteration – Buddy chat on Personal Target (US4, 2026-11-24)
+
+**Goal**: the shared Buddy chat on the Personal Target page, with its own goals conversation; Buddy can only propose goals there ([research.md](research.md) R11, [personal-target-chat-api.md](contracts/personal-target-chat-api.md)).
+
+**Independent Test**: quickstart E1–E4; automated by `PersonalTargetChatComponentTest` and the `personal-target` e2e journey.
+
+- [X] T046 [US4] Add `PERSONAL_TARGET` to `BE/model/ChatConversationType.java` and `ChatConversation.forPersonalTarget(User)`; add `findByUser_IdAndType` to `BE/repository/ChatConversationRepository.java` (only for one-per-user types); add `findPersonalTargetConversation(userId)` and `getOrCreatePersonalTargetConversation(user)` to `BE/service/chat/ChatConversationService.java`
+- [X] T047 [P] [US4] Append to `ms-personal-routine-manager/db/F013-personal-goals.sql`: `CREATE UNIQUE INDEX IF NOT EXISTS ux_chat_conv_personal_target ON chat_conversation (user_id) WHERE type = 'PERSONAL_TARGET';`
+- [X] T048 [US4] Add `PERSONAL_TARGET_CHAT(true, DEEP)` to `BE/service/BuddyCall.java`
+- [X] T049 [US4] Create `BE/service/PersonalTargetAiService.java` (`BuddyReply chat(UUID userId, ChatContext context, String userMessage, LocalTime localTime)`), `GeminiPersonalTargetAiService.java` (own client from a fresh `ChatClient.Builder`, no default tools; system prompt: help shape clear, realistic goals, propose with `proposeGoal`, never change plans or routines here and point to the Today/Default routine chat, stay on topic; plus `promptBlock(userId, PERSONAL_TARGET_CHAT, localTime)` and the summary; per-call `GoalProposalTool`) and `MockPersonalTargetAiService.java` (echo)
+- [X] T050 [US4] Create `BE/dto/PersonalTargetChatRequest.java` (record `message`, `localTime`). In `BE/api/AIController.java` add `POST /api/ai/chat/personal-target/{userId}` and `GET /api/ai/chat/personal-target/{userId}/messages` (guard, blank message → 400, store only the text, DEBUG logs)
+- [X] T051 [US4] Add the `personalTargetAi` spy to `BT/support/BaseComponentTest.java`. Component test `BT/component/PersonalTargetChatComponentTest.java`: a message is answered and stored, and history returns it; `localTime` reaches the AI; a stubbed proposal is returned as `goalProposal`; blank message 400; other user 403; unknown user 404. Add `PERSONAL_TARGET_CHAT` to the deep-rule check in `BuddyContextComponentTest`
+- [X] T052 [P] [US4] Create `FE/features/personal-target/api/personalTargetChat.ts`: `submitPersonalTargetChat(userId, message)` → `BuddyReply` (sends `localTime`), `fetchPersonalTargetChatHistory(userId, before?)`
+- [X] T053 [US4] `GoalProposalCard` gets an optional `onSaved` prop (called after a successful save); `BuddyChat` passes its optional `onGoalSaved` prop to it. Add a case to `GoalProposalCard.test.tsx`
+- [X] T054 [US4] In `FE/features/personal-target/pages/PersonalTargetPage.tsx`, add `BuddyChat` beside the cards (`loadHistory`, `onSend`, `onGoalSaved` → reload goals) with the phone toggle per [ui.md](contracts/ui.md); add the `.pt-layout` styles to `FE/App.css`
+- [X] T055 [US4] Extend `e2e/personal-target.spec.ts`: chat with Buddy on the page (mock AI reply shown) and the message is still there after a reload
+- [X] T056 [P] Update `docs/test-flows.md` and both `CLAUDE.md` files (conversation type, endpoints, per-screen chat setup)
+- [X] T057 Gates: `./gradlew build -PtestDb=postgres`; `pnpm lint && pnpm build && pnpm test`; `pnpm test:e2e`
+
+**Results (iteration, 2026-11-24)**: backend `./gradlew build -PtestDb=postgres` 223/223 (analyze fix: the goals chat returns 503 on AI failure, constitution V); frontend lint (no new warnings), build and 220 tests pass; Playwright 11/11 (new chat journey included). With AI on, the app starts and the goals chat reaches Gemini, but the local key is rejected, so quickstart E1–E4 with real Buddy are left for the user.
+
+
+## Phase 8: Iteration – Buddy reviews goals before saving (US5, 2026-11-24)
+
+**Goal**: every new or changed goal is checked by Buddy (realistic, achievable, safe) and refused goals are not saved ([research.md](research.md) R12, [goals-api.md](contracts/goals-api.md), [ui.md](contracts/ui.md)).
+
+**Independent Test**: quickstart F1–F6; automated by `GoalReviewRulesTest`, `GoalReviewComponentTest` and the `personal-target` e2e journey.
+
+- [X] T058 [P] [US5] Create the pure rule `BE/funcs/GoalReviewRules.java`: `clean(accepted, reason, suggestedGoal, suggestedHowToHelp)` → `GoalReview` (accepted → accepted; refused → reason trimmed to ≤ 300 chars, `DEFAULT_REASON` if blank; suggestion kept only if it passes `GoalRules.normalize`). Unit test `BT/unit/GoalReviewRulesTest.java`
+- [X] T059 [US5] Create `BE/service/GoalReviewer.java` (`GoalReview review(UUID userId, GoalRules.Normalized goal)`; throws on failure), `GeminiGoalReviewer.java` (own tool-less client; prompt per R12; structured output → `GoalReviewRules.clean`; null answer → exception) and `MockGoalReviewer.java` (refuses text containing "impossible")
+- [X] T060 [US5] `PersonalGoalService.create/update` return `GoalSaveResult(goal, review)`: rules (400) → create: limit pre-check (409) / update: owned goal (404) and "unchanged" shortcut → review outside a transaction (failure → 503 `REVIEW_UNAVAILABLE`) → the locked write via `TransactionTemplate`. Add DTOs `GoalSaveView`, `GoalReviewView`; `PersonalGoalController` returns 201/200 per the contract
+- [X] T061 [US5] Add "Only propose goals that are realistic, achievable and safe" to `BE/funcs/PersonalGoalPrompt.java` (in-chat rules) and its unit test
+- [X] T062 [US5] Add the `goalReviewer` spy to `BT/support/BaseComponentTest.java`. Update `PersonalGoalComponentTest` to the `GoalSaveView` shape. Component test `BT/component/GoalReviewComponentTest.java`: refused create → 200 `review`, nothing stored; accepted → 201; refused update → goal unchanged; unchanged update → no review; reviewer failure → 503, nothing stored; invalid text 400 and limit 409 never call the reviewer
+- [X] T063 [P] [US5] FE: types `GoalReview`, `GoalSaveResult`; `api/goals.ts` `createGoal/updateGoal` return `GoalSaveResult` via `utils/goalSaveResult.ts` (`parseGoalSaveResult`, unit tested)
+- [X] T064 [US5] `GoalForm`: `onSave` returns `GoalReview | null`; "Checking…" + status line; refusal box with reason, suggestion and "Use suggestion". `PersonalTargetPage` handlers return the review. Component test `GoalForm.test.tsx` (refusal shown, suggestion fills the fields, text kept)
+- [X] T065 [US5] `GoalProposalCard`: a refusal shows reason + suggestion (final); 503 retryable. Update `GoalProposalCard.test.tsx`
+- [X] T066 [US5] e2e `personal-target.spec.ts`: "Do the impossible every day" is refused; "Use suggestion" then Save saves it
+- [X] T067 [P] Update `docs/test-flows.md`, both `CLAUDE.md` files and the epic
+- [X] T068 Gates: `./gradlew build -PtestDb=postgres`; `pnpm lint && pnpm build && pnpm test`; `pnpm test:e2e`
+
+**Results (review iteration, 2026-11-24)**: backend `./gradlew build -PtestDb=postgres` 231/231; frontend lint (no new warnings), build and 228 tests pass; Playwright 12/12 (new review journey included). With AI on, a goal save reaches the Gemini reviewer; the local key is rejected, so it returns 503 and saves nothing, as FR-024 requires. Quickstart F1–F5 (real Buddy verdicts) are left for the user.
+
 ---
 
 ## Dependencies & Execution Order

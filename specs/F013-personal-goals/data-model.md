@@ -72,3 +72,11 @@ stateDiagram-v2
 ## 4. BuddyReply (internal)
 
 `service/BuddyReply(String text, GoalProposalView goalProposal)` is the return type of `AiChatService.defaultRoutineChat`, `AiChatService.dailyRoutineChat` and `ReflectionAiService.chat`. Only `text` goes into chat history.
+
+## 5. Personal Target conversation (iteration 2026-11-24)
+
+A `chat_conversation` row with `type = 'PERSONAL_TARGET'` and no subject column (`default_routine_id` and `routine_date` are null). Each user has at most one, enforced in prod by `ux_chat_conv_personal_target` (partial unique index on `user_id`, in `db/F013-personal-goals.sql`). Messages, paging and compaction work as for the other conversations (F004). Proposal cards aren't stored.
+
+## 6. GoalReview (not stored, iteration 2026-11-24)
+
+Buddy's verdict on a goal being saved. `accepted`; when refused, `reason` (1–300 chars, kind, no blame) and an optional `suggestion` `{goal, howToHelp}` that passes `GoalRules`. Returned once in the save response (`GoalSaveView.review`), never stored. Goals saved earlier are not re-reviewed until they change.

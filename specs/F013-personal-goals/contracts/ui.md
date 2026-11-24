@@ -38,3 +38,16 @@
   - **Error**: the server's `message`. The card stays actionable only for a network error (status 0); 4xx errors are final.
 - The status area is `role="status"` so screen readers announce the outcome.
 - On phones (≤ 760px) pages normally switch back to the board after Buddy replies. A reply with a proposal keeps the chat view open so the card is seen: `BuddyChat` calls `onAfterSend({ hasGoalProposal })`.
+
+## Buddy chat on the Personal Target page (iteration 2026-11-24)
+
+- The page shows the shared `BuddyChat` beside the cards (wide screens: right column, like Today). Title "Routine Buddy", subtitle "Here to help with your goals", placeholder `Try: "Help me set a sleep goal"`. History loads from `fetchPersonalTargetChatHistory`.
+- **Phones (≤ 760px)**: the page has `data-mobile-view="goals" | "chat"`. A floating chat button opens the chat, and a "View goals" button returns. The chat view stays open after replies.
+- Confirming a proposal on this page reloads the goal list (`onGoalSaved`), so the goal appears at once.
+
+## Buddy reviews a goal on save (iteration 2026-11-24)
+
+- **Form**: while saving, the Save button reads "Checking…" and a `role="status"` line says "Buddy is checking your goal…". Both buttons are disabled.
+- **Refused**: the form stays open with the typed text. A `role="alert"` box shows Buddy's reason and, when there is one, the suggested goal (and help text) with a **Use suggestion** button that fills the fields (no save). The user edits or saves again.
+- **503**: the server message shows inline, the text is kept, and Save can be pressed again.
+- **Proposal card**: a refusal on Confirm shows Buddy's reason and the suggestion text. It is final (no Confirm); the user can ask Buddy again. A 503 stays retryable.
