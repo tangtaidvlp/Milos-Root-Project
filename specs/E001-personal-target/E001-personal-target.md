@@ -88,12 +88,11 @@ This feature is integrated, all testing done, manual testing from me
 
 Ask as much as question you need
 
-### Open questions (2026-11-24, after the F013 iteration)
+### Answered questions (2026-11-25)
 
-1. **Push the iterations?** The Buddy chat on Personal Target and the goal check on save are uncommitted in all three repos. Should I commit it and push it to the open E001 PRs (backend #3, UI #3, root #1)? Recommended: yes, one commit per repo.
-2. **Existing chats return 500 when the AI fails.** The constitution requires 503 with a friendly message. The new goals chat already does this; the Today, Default routine and Reflection chats don't. Fix them in E001 (small, about 3 handlers + tests), or file a bug? Recommended: file a bug, keep E001 focused.
-3. **No per-user AI rate limit.** The constitution asks for per-user rate/cost limits on AI calls; no AI endpoint has one, including the new goals chat. File a bug? Recommended: yes, before production.
-
-4. **Goal saves while Buddy is down.** You chose "block until fixed", so when Buddy can't answer, no goal can be saved (503). With today's rejected key, that means every AI-on run, probably including your local default profile. Keep it strict, or save the goal unchecked when Buddy can't answer (Buddy's refusals still block)? Recommended: save unchecked during an outage, so an AI outage never locks users out of their own goals.
+1. **Push the iterations?** Yes. Committed and pushed to the E001 PRs.
+2. **Existing chats return 500 when the AI fails.** Filed and fixed as B009.
+3. **No per-user AI rate limit or timeouts.** Filed and fixed as B010.
+4. **Goal saves while Buddy is down.** Block. Users must never be left with an unsafe goal, so FR-024 stays strict.
 
 Needs from you (not questions): a valid `GEMINI_API_KEY` (the current one is rejected), then the manual checks in each quickstart, including F013 E1–E4 and F1–F6. Until then, run the backend with `SPRING_AI_ACTIVE=false` to save goals locally (the mock reviewer accepts everything except text with "impossible").

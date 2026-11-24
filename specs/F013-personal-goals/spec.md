@@ -26,6 +26,7 @@
 - Q: When should Buddy review a goal? → A: On every save of a new or edited goal, before it is saved.
 - Q: If Buddy finds a problem, what happens? → A: Block until fixed. The goal can't be saved until Buddy accepts it.
 - Q: What does Buddy check? → A: That the goal is realistic and achievable, and safe (not harmful).
+- Q: When Buddy can't answer (outage), save the goal unchecked or block? → A: Block (2026-11-25). Users must never be left with an unsafe goal, so FR-024 stays strict.
 
 ## User Scenarios & Testing *(mandatory)*
 
