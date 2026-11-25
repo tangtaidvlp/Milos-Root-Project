@@ -30,6 +30,10 @@ The types come from the task taxonomy in `~/.claude/CLAUDE.md`.
 | Task | `T` | Small change, with optional steps | `.specify/templates/task-request-template.md` | `specs/T###-<slug>/T###-<slug>.md` | Fill in the steps, then ask Claude to implement the draft directly. There is no spec or plan. |
 | Defect | `B` | Bug fix | `.specify/templates/bug-report-template.md` | `AI-project-docs/bugs/B###.MD` | `/speckit-debug AI-project-docs/bugs/B###.MD` |
 
+## Parallel work
+
+Drafts are always created in the main checkout (`MAIN_ROOT`), even when run from a worktree. `MAIN_ROOT` is `$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")`. When finding the next number, search `specs/` (and `AI-project-docs/bugs/` for defects) in **every** path from `git worktree list --porcelain`, so two worktrees never get the same ID.
+
 ## Steps
 
 1. **Type**: if the first word of the input is `epic`, `feature`, `task` or `defect` (case-insensitive), that is the type, and the rest of the input is the name. Otherwise, ask the user for the type with AskUserQuestion, using the four types and their meanings from the table, and use the whole input as the name.
