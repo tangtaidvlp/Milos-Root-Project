@@ -41,6 +41,11 @@ Each subproject has its own `CLAUDE.md` with detailed architecture docs, command
 - Bugs use the custom `speckit-debug` skill (`/speckit-debug <bug>`), or the gated `bugfix` workflow (`specify workflow run bugfix`). The steps are reproduce → root cause → failing regression test → fix → verify. Each bug gets a report at `specs/###-fix-*/bugfix.md`, based on `.specify/templates/bugfix-template.md`. Large fixes (schema change, breaking API change, wide redesign) are handed off to `/speckit-specify` instead.
 
 
+### Parallel work (worktrees)
+- One work item = one git worktree = one branch = one Claude session. Start one with `/speckit-worktree <ID>`; it creates `../Projects.worktrees/<ID>-<slug>/` with its own branch in the root repo and in `ms-`/`ui-` submodules, and its own `.specify/feature.json`.
+- The user decides which items run in parallel. Never switch branches or edit `.specify/feature.json` to jump to another work item; work only inside the current worktree, and never read or edit files in another worktree.
+- Create new IDs (`/speckit-init`) only in the main checkout; numbering scans all worktrees.
+
 ### Closed specs
 - A folder `specs/.done.<dir>/` is a closed (finished) feature or bugfix. Ignore it: do not list, search or read it unless the user names it or a CLAUDE.md pointer sends you there for a specific detail.
 - Close a finished feature with `/speckit-close <F### | dir>` (no argument = the current feature in `.specify/feature.json`).
