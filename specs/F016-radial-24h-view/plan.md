@@ -6,7 +6,7 @@
 
 ## Summary
 
-Add a "Timeline | Circle" view switch to Today (incl. Reflection) and Default routine. The Circle view is one new SVG component, `RadialDayChart`, used everywhere: tasks are slices of a 24h clock face, and every name and time sits outside the circle with a leader line. Clicking a slice or its label calls the same handler the vertical board calls on click. Buddy chat gets a hide button and collapses to a narrow rail, like the sidebar. Both choices are saved per device in `localStorage`. Frontend only: no backend or API change.
+Add a "Timeline | Circle" view switch to Today (incl. Reflection) and Default routine. The Circle view is one new SVG component, `RadialDayChart`, used everywhere: tasks are slices of a 24h clock face, and every name and time sits outside the circle with a leader line. Clicking a slice or its label calls the same handler the vertical board calls on click; dragging an arc moves the task (same update as the timeline). Buddy chat gets a hide button and collapses to a narrow rail, like the sidebar. Both choices are saved per device in `localStorage`. Frontend only: no backend or API change.
 
 ## Technical Context
 

@@ -14,7 +14,7 @@
 
 ### Session 2026-11-25
 
-- Q: What can the user do with tasks on the radial chart? → A: Overview plus click to edit: clicking a slice does what clicking the task does on the vertical board. No dragging on the circle.
+- Q: What can the user do with tasks on the radial chart? → A: Overview plus click to edit: clicking a slice does what clicking the task does on the vertical board. Dragging an arc moves the task (FR-006).
 - Q: How does Reflection show Plan and Reality in radial view? → A: Two circles side by side, the same layout as today (one at a time on narrow screens).
 - Q: How do task names stay readable on thin slices? → A: As in the mock: all text sits outside the circle. The circle may shrink, but the text must always be clear.
 
@@ -88,10 +88,10 @@ On a wide screen the user hides the Buddy chat panel with a button, the same way
 
 - **FR-001**: Daily Routine, Reflection and Default Routine MUST each have a control to switch between the vertical view and the radial view. Vertical is the default.
 - **FR-002**: The view choice MUST be remembered on the device and apply to all three pages.
-- **FR-003**: The radial view MUST show a 24-hour clock centred in its board area: midnight at the top, time running clockwise, hour ticks and numbers outside a track ring (00, 06, 12, 18 emphasised). Each task is a rounded arc on the track from its start to its end time, in its task colour. With a live clock (Today) it also shows a now hand with a knob on the track, a thin arc for the time elapsed today, and in the centre the date, the time, the current task and "until HH:mm · Xh left" (or the next task).
+- **FR-003**: The radial view MUST show a 24-hour clock centred in its board area: midnight at the top, time running clockwise, hour ticks and numbers outside a track ring (00, 06, 12, 18 emphasised). Each task is a rounded arc on the track from its start to its end time, in its task colour. With a live clock (Today) it also shows a now hand with a knob on the track, and in the centre the time, the current task (a pill: task colour fill, reversed text) and "until HH:mm · Xh left" (or "next: …"). The centre disc is tinted with the active task's pastel. The now hand is red, like the timeline now-line.
 - **FR-004**: Each task's information MUST sit around the clock on a label ring (1.2× the clock radius, at least clear of the hour numbers), joined to its arc by a line in the task's pastel colour that passes under the hour numbers. Each label shows a colour bar, name, `HH:mm – HH:mm · duration`, and a **Now** or **Done** badge, in the style of [resources/radial-24h-piece-information-elegant.png](resources/radial-24h-piece-information-elegant.png) at a compact height. Labels MUST NOT overlap. When the clock would get too small, the labels list under it without lines. All text MUST stay readable from 320px up; the clock shrinks, the text does not.
 - **FR-005**: Clicking or tapping a task's arc or label MUST do the same as clicking that task on the vertical board for that page and mode. Labels MUST be reachable and usable by keyboard, with a visible focus.
-- **FR-006**: The radial view MUST NOT offer drag to move or resize. Existing add-task controls (button, floating button, Buddy) MUST keep working in radial view.
+- **FR-006**: Dragging a task's arc round the clock MUST move the task (5-minute steps, saved like a timeline drag); a click without movement still opens it. No resize on the circle. Existing add-task controls (button, floating button, Buddy) MUST keep working in radial view.
 - **FR-007**: All three pages MUST use the same radial chart, so it looks and behaves the same everywhere.
 - **FR-008**: In Reflection, the radial view MUST show Plan and Reality as two circles side by side where the boards are side by side today, and one at a time where one board shows today.
 - **FR-009**: Any change to tasks (edit dialog, Buddy, reset day) MUST show on the radial view without a reload.
@@ -115,7 +115,7 @@ On a wide screen the user hides the Buddy chat panel with a button, the same way
 
 ## Assumptions
 
-- Out of scope: drag to move or resize on the circle, and any change to tasks, routines or chat on the server. This feature is display only.
+- Out of scope: resizing a task on the circle, and any change to tasks, routines or chat on the server. Tasks can be moved by dragging arcs, with no server or API change.
 - Colors, fonts and spacing follow the app's current design tokens and both themes. The sketch is for layout only.
 - The view and chat-hide choices are stored per device, the same way as the sidebar's collapsed state. They are not synced across devices.
 - Free time between tasks shows as empty circle space.

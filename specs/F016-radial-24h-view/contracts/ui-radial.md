@@ -10,7 +10,8 @@ type RadialDayChartProps<T extends RadialTask> = {
   label: string                     // accessible name, e.g. "Plan"; shown in the centre without a live clock
   onTaskClick?: (task: T) => void   // absent = view-only: rows are plain text, arcs not clickable
   showCompletion?: boolean          // default false; true on Today's plan (Done badges)
-  currentTime?: number              // live clock minutes; absent = no hand, elapsed arc, centre time or Now badge
+  onMoveTask?: (task: T, startMinutes: number) => Promise<unknown> | void  // drag an arc to move (5-min steps); absent = arcs only click
+  currentTime?: number              // live clock minutes; absent = no hand, centre time or Now badge
   width: number; height: number     // measured board body (RadialBoard)
 }
 ```
@@ -25,7 +26,8 @@ type RadialDayChartProps<T extends RadialTask> = {
 Drop-in for `EditingBoard`: takes the same prop names, so a page picks `const Board = view === 'radial' ? RadialBoard : EditingBoard` and keeps its JSX.
 
 - Uses: `routine` (`routine?.tasks`), `label` (default "24-hour circle"), `onRequestEditTask` → `onTaskClick`, `showCompletion` (default `true`, as on `EditingBoard`), `liveClock` (default `true`), `showToolbar` (default `true`), `clock`, `toolbarActions`, `toolbarMenuActions`, `onResetDay`, `resetDisabled`.
-- Ignores drag/scroll props (`onPersistTaskChange`, `onRequestCreateTask`, `onToggleComplete`, `onRequestDeleteTask`, `gapClearMode`, `scrollContainerRef`, `onPersistError`).
+- Arc drag: `onPersistTaskChange` / `onPersistError` (5-minute steps, same update shape as the timeline, no resize). A failed save is reported once via `onPersistError` and the arc returns to its saved time.
+- Ignores `onRequestCreateTask`, `onToggleComplete`, `onRequestDeleteTask`, `gapClearMode`, `scrollContainerRef`.
 - Toolbar: `BoardToolbar` with `boardTools={false}`, its own `useBoardClock` when no shared `clock` is passed.
 
 ## `BoardViewSwitch` (`features/radial-view/components/BoardViewSwitch.tsx`)
@@ -43,7 +45,7 @@ type BoardViewSwitchProps = { value: 'vertical' | 'radial'; onChange: (view: 've
 |---|---|
 | `BoardToolbar.jsx` | `boardTools?: boolean` (default `true`). `false` hides zoom and Gap clear, inline and in "More". |
 | `CompareBoards.jsx` | `view?: 'vertical' \| 'radial'`. Radial: `RadialBoard` instead of `EditingBoard` in each column (`label` "Plan" / "Reality"); the shared toolbar uses `boardTools={false}`. |
-| `DefaultRoutineEditor.tsx` | `view?: 'vertical' \| 'radial'` (default `vertical`; onboarding never passes it). Radial: `RadialBoard` (`liveClock={false}`, same props), so "Copy Weekday to Weekend" stays in its toolbar. Subtitle says "click a task to edit" instead of "drag to move". |
+| `DefaultRoutineEditor.tsx` | `view?: 'vertical' \| 'radial'` (default `vertical`; onboarding never passes it). Radial: `RadialBoard` (`liveClock={false}`, same props), so "Copy Weekday to Weekend" stays in its toolbar. Subtitle says "click to edit · drag to move" instead of "drag to move". |
 | `BuddyChat.jsx` | `onHide?: () => void` and `panelId?: string`. With `onHide`: an icon button **"Hide Buddy chat"** (`aria-expanded="true"`, `aria-controls={panelId}`) in the header. |
 | `DailyRoutinePage.jsx`, `DefaultRoutinePage.tsx` | Own `boardView` and `chatPanel` via `useDevicePreference`; render the switch; root gets `data-board-view` and `data-chat`. |
 
