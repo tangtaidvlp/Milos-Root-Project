@@ -16,29 +16,34 @@
 ## Summary
 
 <!-- One or two sentences: what do you want to build? -->
+I want a radial 24 hour view so it's better for user to see overall of their daily routine
 
 
 ## Problem / Motivation
 
 <!-- What pain point or need does this address? Why now? -->
-
+The vertical chart is too big to see the overview
+This apply for Daily Routine, Reflection, Default Routine view
 
 ## Users
 
 <!-- Who uses this? (e.g., signed-in user, guest, admin) -->
-
+End user
 
 ## What the user should be able to do
 
 <!-- Main flows, one per bullet, most important first. -->
-
+Have a view switch between vertical chart and the radial chart
+The Buddy Chat could be 
 - 
 
 ## Rules & Constraints
 
 <!-- Business rules, limits, validations, things that must or must not happen. -->
-
-- 
+The style should fit the project current style, the provided image radial-24h-chart.png is just for sketch
+The circle size could be resized based on screen width, the important is the text of each piece in the circle must be clear
+We need to reuse the Radial 24h chart component everywhere
+One more point: THE BUDDY CHAT could be hide by a button same way with left side bar
 
 ## Out of Scope
 
