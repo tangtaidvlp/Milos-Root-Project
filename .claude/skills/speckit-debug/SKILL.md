@@ -43,9 +43,9 @@ Read the `CLAUDE.md` of each affected subproject before running anything. Known 
 | Project | Run | Test | Lint/Build |
 |---------|-----|------|------------|
 | `ms-personal-routine-manager/` (Spring Boot, Java 25) | `SPRING_PROFILES_ACTIVE=fast ./gradlew bootRun` (no DB) or `docker compose up -d database && ./gradlew bootRun` | `./gradlew test --tests "<FQCN>"`, then `./gradlew test` | `./gradlew build` |
-| `ui-personal-routine-manager/` (React 19, Vite) | `pnpm dev` (proxies `/api` to `localhost:8080`) | No test framework configured | `pnpm lint`, `pnpm build` |
+| `ui-personal-routine-manager/` (React 19, Vite) | `pnpm dev` (calls the backend at `localhost:8080` via `VITE_API_BASE_URL`; no proxy) | `pnpm test` (Vitest: `*.test.ts` in Node, `*.test.tsx` in jsdom), `pnpm test:e2e` (Playwright; needs backend + `pnpm dev`) | `pnpm lint`, `pnpm build` |
 
-For frontend-only bugs where no test framework exists: do NOT install one without asking the user. Instead record a precise manual verification in Section 5 of `bugfix.md` and, where the logic is pure (a util or hook helper), say in the report that a test framework would let it be covered.
+Frontend regression tests follow `ui-personal-routine-manager/CLAUDE.md` ("Testing strategy"): put the test next to the code; use a unit test for a logic bug, a component test for a widget bug, and Playwright for a journey bug. Fake the backend at the feature's `api/` module with `vi.mock`; don't add MSW.
 
 ## Execution Steps
 
@@ -87,7 +87,7 @@ Fill in Section 4: exact location, the faulty logic or assumption, and the blast
 
 ### 5. Write the failing regression test
 
-1. Add a test that reproduces the bug at the lowest level that shows it (unit before integration before app test). Follow the existing test package layout under `src/test/java/com/tom/payment/routinemanager/`.
+1. Add a test that reproduces the bug at the lowest level that shows it (unit before integration before app test). Backend: follow the existing test package layout under `src/test/java/com/tom/payment/routinemanager/`. Frontend: a `*.test.ts(x)` file next to the code (see Project Context).
 2. Run it and confirm it fails **for the root-cause reason**, not for setup errors.
 3. Record Section 5 with the failure output excerpt. Set Status to `Root cause confirmed`.
 4. **Pause point.**
