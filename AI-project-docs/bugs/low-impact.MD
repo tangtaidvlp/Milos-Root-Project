@@ -9,3 +9,4 @@
 | — | Settings kept after the session expires | When the 401 refresh fails (B014), the user is signed out but their settings stay in memory until the next sign-in reloads them (`useAuthSession.ts`). | Open |
 | — | `console.log` in onboarding submit | `completeOnboarding.ts:13` logs the user ID and default routine to the browser console. | Open |
 | — | 3 lint warnings | Redundant `Boolean()` in `EditingBoard.tsx:207`; missing hook dependencies in `useReflectionMode.ts:67` and `useDailyPlan.ts:42`. | Open |
+| — | Decide: keep or remove Push mode "push up" | Push mode can also push the tasks above when a task is dragged up (T002). It is turned off for now by the front-end toggle `PUSH_UP_ENABLED = false` in `ui-personal-routine-manager/src/config/featureFlags.ts`; with it off, Push mode only pushes down. Keep: set it to `true`. Remove: delete the toggle and the upward branch in `board/utils/dragPreview.ts` (plus its "Push-up on" tests). | Open |
