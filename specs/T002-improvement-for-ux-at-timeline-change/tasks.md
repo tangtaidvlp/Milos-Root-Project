@@ -173,6 +173,12 @@ None: the branches `feat/T002-timeline-drag-ux` already exist in the root repo, 
 
 ---
 
+## Follow-up (user feedback)
+
+- [X] T020 Hold time 300 ms -> 150 ms (`HOLD_TO_DRAG_MS` in `EditingBoard.tsx`).
+- [X] T021 Push mode swap: in `dragPreview.ts`, a move that passes at least half of another task swaps with it instead of pushing; tests in `dragPreview.test.ts`.
+- [X] T022 Docs: spec, research, contracts, quickstart, ui `CLAUDE.md`.
+
 ## Dependencies & Execution Order
 
 - The backend track (T001 → T002, T003 → T004) and the UI track (T005–T008 [P]) are independent: run them in parallel.

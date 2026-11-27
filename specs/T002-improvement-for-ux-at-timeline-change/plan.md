@@ -4,7 +4,7 @@
 
 ## Summary
 
-Make dragging on the timeline feel natural: a 0.3s hold starts a drag (a swipe scrolls), the drop shows at once and saves in the background (revert + bottom message on failure), tasks may overlap up to 3 at once (side by side), and "Gap clear" becomes "Push mode", which pushes tasks both ways with a live preview.
+Make dragging on the timeline feel natural: a 0.15s hold starts a drag (a swipe scrolls), the drop shows at once and saves in the background (revert + bottom message on failure), tasks may overlap up to 3 at once (side by side), and "Gap clear" becomes "Push mode", which pushes tasks both ways with a live preview.
 
 The backend must stop its automatic overlap push and check the 3-task cap instead, otherwise it undoes overlaps and scrambles Push mode saves (spec Clarifications).
 
@@ -84,7 +84,7 @@ ui-personal-routine-manager/e2e/today-board.spec.ts
 
 Details and alternatives are in [research.md](research.md).
 
-- **Hold-to-drag (R1)**: task cards use `touch-action: pan-y`. A press starts a 300 ms timer. Moving more than 5 px first cancels it, so the swipe scrolls. When the timer fires, the board highlights the task, captures the pointer and blocks scrolling with a non-passive `touchmove` listener. A short tap still opens the dialog.
+- **Hold-to-drag (R1)**: task cards use `touch-action: pan-y`. A press starts a 150 ms timer. Moving more than 5 px first cancels it, so the swipe scrolls. When the timer fires, the board highlights the task, captures the pointer and blocks scrolling with a non-passive `touchmove` listener. A short tap still opens the dialog.
 - **Instant drop (R2)**: on drop, the board keeps a `pending` map of positions and renders from it, marks itself busy (three dots, task layer and toolbar inert) and awaits `onPersistTaskChange`. On success it clears `pending`; the page has already reloaded the routine. On failure it clears `pending`, so the board shows the old layout, and shows a `BoardNotice`.
 - **Push mode (R3)** and **cap (R4)**: pure functions compute the preview positions on every move. The dragged task is marked blocked when the preview breaks the cap, and a blocked drop saves nothing.
 - **Lanes (R6)**: overlapping blocks get `left`/`width` from lane math. All position changes animate with a CSS transition on `top`/`height`/`left`/`width`, except the dragged task and when reduced motion is on.

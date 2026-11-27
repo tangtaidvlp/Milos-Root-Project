@@ -2,7 +2,7 @@
 
 ## R1. Hold-to-drag without breaking scroll
 
-- **Decision**: `.ob-board-task` and its resize handle change from `touch-action: none` to `pan-y`, so the browser can scroll on a swipe. On `pointerdown`, store the press (no pointer capture yet) and start a 300 ms timer:
+- **Decision**: `.ob-board-task` and its resize handle change from `touch-action: none` to `pan-y`, so the browser can scroll on a swipe. On `pointerdown`, store the press (no pointer capture yet) and start a 150 ms timer:
   - The pointer moves more than 5 px before the timer fires: cancel. On touch the browser scrolls and sends `pointercancel`; on a mouse nothing happens.
   - `pointerup` before the timer with less than 5 px of movement: it's a tap, so open the task dialog, as today.
   - The timer fires: arm the drag. Set `dragState` (the existing `.is-dragging` style is the highlight), call `setPointerCapture` on the task's `main` part (try/catch, since the pointer may be gone), and set `armedRef`. A `touchmove` listener on the scroll container, added with `{ passive: false }`, calls `preventDefault()` while armed, so the finger drags the task instead of the page.
@@ -26,6 +26,7 @@
   - **Move by d < 0**: the dragged task, plus (Push mode) every other task with `start ≤ originalStart`, moves by d.
   - **Resize longer by d**: (Push mode) every task with `start ≥ originalStart + originalDuration` moves by +d.
   - **Resize shorter**: no other task moves.
+  - **Swap (Push mode, move only)**: if the live edge has reached a task's midpoint (down: midpoint > old end and ≤ live end; up: midpoint < old start and ≥ live start), no pushing. The dragged task swaps with each passed task in turn (nearest first), keeping the gap: down, the passed task takes the dragged task's current start and the dragged task ends where it ended; up, mirrored.
   - **Bounds**: d is clamped so every moved task starts within 00:00–23:55. The drag simply stops there, and ends may still pass 24:00 (F011).
 - **Rationale**: this matches spec FR-013, and it's symmetric and easy to test. The board calls it on every move (the preview) and on the drop (the save list).
 
