@@ -45,6 +45,7 @@ None. Branches `feat/F017-task-overlay` already exist in root, `ms-` and `ui-`.
 - [X] T013 Docs: `ui-personal-routine-manager/CLAUDE.md` (timeline drag bullet: Overlay rule; board API `showOverlay`; status line F017), `ms-personal-routine-manager/CLAUDE.md` if it lists task fields.
 - [X] T014 Run `./gradlew test` (ms), `pnpm lint && pnpm test && pnpm build`, `pnpm test:e2e e2e/today-board.spec.ts` (ui).
 - [X] T015 Feedback: during a drag the dragged task stays out of the side-by-side lanes and floats full width, so other tasks never shift sideways (`EditingBoard.tsx`).
+- [X] T016 Feedback: drag time indicator — red start/end marks and duration in the time column while dragging (`EditingBoard.tsx`, `EditingBoard.module.css`; design `resources/drag-time-indicator.png`).
 
 ## Dependencies
 

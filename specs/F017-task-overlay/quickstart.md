@@ -15,3 +15,4 @@ Run: backend `SPRING_PROFILES_ACTIVE=fast ./gradlew bootRun`, UI `pnpm dev`. Aut
 | 9 | Normal mode: resize an Overlay-off task into the next task | Stops at the next task's start |
 | 10 | Reflection Reality task dialog | No Overlay switch |
 | 11 | Phone: hold 0.1s and drag (as 4–5) | Same as desktop |
+| 12 | Drag or resize any task | Red start/end times and the duration show in the time column and follow the drag; gone on release |
