@@ -26,7 +26,7 @@
   - **Move by d < 0**: the dragged task, plus (Push mode) every other task with `start ≤ originalStart`, moves by d.
   - **Resize longer by d**: (Push mode) every task with `start ≥ originalStart + originalDuration` moves by +d.
   - **Resize shorter**: no other task moves.
-  - **Swap (Push mode, move only)**: if the live edge has reached a task's midpoint (down: midpoint > old end and ≤ live end; up: midpoint < old start and ≥ live start), no pushing. The dragged task swaps with each passed task in turn (nearest first), keeping the gap: down, the passed task takes the dragged task's current start and the dragged task ends where it ended; up, mirrored.
+  - **Swap (Push mode, move only)**: if the live edge has reached a task's midpoint (down: midpoint > old end and ≤ live end; up: midpoint < old start and ≥ live start), no pushing. The dragged task swaps with each passed task in turn (nearest first), keeping the gap: down, the passed task takes the dragged task's current start and the dragged task ends where it ended; up, mirrored. *(Removed by F017: Push mode only pushes; swapping is the Normal mode rule for Overlay-off tasks.)*
   - **Bounds**: d is clamped so every moved task starts within 00:00–23:55. The drag simply stops there, and ends may still pass 24:00 (F011).
 - **Rationale**: this matches spec FR-013, and it's symmetric and easy to test. The board calls it on every move (the preview) and on the drop (the save list).
 
