@@ -178,6 +178,7 @@ None: the branches `feat/T002-timeline-drag-ux` already exist in the root repo, 
 - [X] T020 Hold time 300 ms -> 150 ms (`HOLD_TO_DRAG_MS` in `EditingBoard.tsx`).
 - [X] T021 Push mode swap: in `dragPreview.ts`, a move that passes at least half of another task swaps with it instead of pushing; tests in `dragPreview.test.ts`.
 - [X] T022 Docs: spec, research, contracts, quickstart, ui `CLAUDE.md`.
+- [X] T023 Hold-to-drag on touch only, 100 ms; mouse drags once it moves past 5 px (`EditingBoard.tsx`, e2e `today-board`).
 
 ## Dependencies & Execution Order
 

@@ -20,7 +20,7 @@ pnpm test:e2e --grep "today board"                   # backend + pnpm dev runnin
 | # | Do | Expect |
 |---|---|---|
 | 1 | On Today, swipe fast across tasks | The board scrolls; no task moves |
-| 2 | Press and hold a task ~0.15s, then drag | The task highlights, then follows the finger or mouse |
+| 2 | Phone: press and hold a task ~0.1s, then drag. Desktop: just drag with the mouse | The task highlights, then follows the finger or mouse |
 | 3 | Tap or click a task | The task dialog opens |
 | 4 | Drop a task at a new time | It stays there, no jump back; dots show briefly; the board is locked meanwhile |
 | 5 | Stop the backend, drag and drop | The task returns to its old place; a bottom message says something went wrong |

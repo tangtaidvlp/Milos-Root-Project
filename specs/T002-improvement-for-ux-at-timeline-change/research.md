@@ -2,7 +2,7 @@
 
 ## R1. Hold-to-drag without breaking scroll
 
-- **Decision**: `.ob-board-task` and its resize handle change from `touch-action: none` to `pan-y`, so the browser can scroll on a swipe. On `pointerdown`, store the press (no pointer capture yet) and start a 150 ms timer:
+- **Decision**: `.ob-board-task` and its resize handle change from `touch-action: none` to `pan-y`, so the browser can scroll on a swipe. On `pointerdown`, store the press (no pointer capture yet) and start a 100 ms timer (touch only; a mouse or pen press arms the drag as soon as it moves past 5 px):
   - The pointer moves more than 5 px before the timer fires: cancel. On touch the browser scrolls and sends `pointercancel`; on a mouse nothing happens.
   - `pointerup` before the timer with less than 5 px of movement: it's a tap, so open the task dialog, as today.
   - The timer fires: arm the drag. Set `dragState` (the existing `.is-dragging` style is the highlight), call `setPointerCapture` on the task's `main` part (try/catch, since the pointer may be gone), and set `armedRef`. A `touchmove` listener on the scroll container, added with `{ passive: false }`, calls `preventDefault()` while armed, so the finger drags the task instead of the page.

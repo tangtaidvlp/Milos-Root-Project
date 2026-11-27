@@ -13,8 +13,8 @@
 ### Session 2026-11-26
 
 - Q: Which timeline boards get the new drag behaviour? → A: All timeline boards (Today, Default routine, Onboarding, Reflection compare). The circle view is out of scope.
-- Q: Does the 0.15s hold apply to every input or only to touch? → A: Mouse and touch.
-- Q: What if a Push mode move passes another task? → A: Hold time is 0.15s. Once the dragged task has passed at least half of another task, it swaps with it instead of pushing (gap kept, other tasks stay put).
+- Q: Does the 0.1s hold apply to every input or only to touch? → A: Touch only (phone browsers). With a mouse, the drag starts once the pointer moves past a few pixels; a click still opens the task.
+- Q: What if a Push mode move passes another task? → A: Once the dragged task has passed at least half of another task, it swaps with it instead of pushing (gap kept, other tasks stay put).
 - Q: What happens when a drag would put a 4th task in the same time slot? → A: Show an error that 4 tasks can't run in parallel. The change is not applied.
 - Q: How should Gap clear work? → A: Rename it to "Push mode", off by default. Turning it on tells the user that Push mode is on and changing a task's size or position pushes other tasks. Other tasks move live while dragging.
 - Q: Does Push mode push only down? → A: No, it pushes both ways. Dragging up pushes the tasks before the task up; dragging down pushes the tasks after it down.
@@ -24,7 +24,7 @@
 
 ### User Story 1 - Hold to drag, swipe to scroll (Priority: P1)
 
-A user scrolls the board by swiping, without picking up a task by accident. To move or resize a task, they press and hold it for 0.15s. The task is then highlighted to show it can be dragged.
+A user scrolls the board by swiping, without picking up a task by accident. To move or resize a task on a phone, they press and hold it for 0.1s (with a mouse, they just drag). The task is then highlighted to show it can be dragged.
 
 **Why this priority**: This is the main complaint. Today any touch on a task starts a drag, so scrolling a busy board is frustrating.
 
@@ -33,7 +33,7 @@ A user scrolls the board by swiping, without picking up a task by accident. To m
 **Acceptance Scenarios**:
 
 1. **Given** a board with tasks, **When** the user swipes quickly starting on a task, **Then** the board scrolls and the task stays where it was.
-2. **Given** a task, **When** the user presses and holds it for 0.15s, **Then** the task is highlighted as ready to drag, and moving the pointer moves it (or resizes it, from the resize handle).
+2. **Given** a task, **When** the user presses and holds it for 0.1s, **Then** the task is highlighted as ready to drag, and moving the pointer moves it (or resizes it, from the resize handle).
 3. **Given** a task, **When** the user taps or clicks it without holding or moving, **Then** the task dialog opens as it does today.
 4. **Given** a task is ready to drag, **When** the user releases it without moving, **Then** the highlight goes away and nothing changes.
 
@@ -95,8 +95,8 @@ Users can place tasks at the same time (for example "Lunch" during "Podcast"), f
 ### Edge Cases
 
 - Push mode swap: exactly half passed counts as passed; passing several tasks swaps with each in turn, nearest first.
-- The pointer is released or cancelled (for example by an incoming call or a tab switch) during the 0.15s hold or during a drag: no change is made and the highlight clears.
-- The user moves more than a few pixels before 0.15s: this counts as a scroll and no drag starts.
+- The pointer is released or cancelled (for example by an incoming call or a tab switch) during the 0.1s hold or during a drag: no change is made and the highlight clears.
+- The user moves more than a few pixels before 0.1s: this counts as a scroll and no drag starts.
 - Push mode pushes a task past 24:00: it wraps to the next morning as an overnight task, as dragging does today (F011).
 - Push mode would push a task above 00:00: the drag stops there, since no task can start before 00:00.
 - An overnight task (two blocks) counts as covering both its evening and morning times for the overlap cap.
@@ -108,8 +108,8 @@ Users can place tasks at the same time (for example "Lunch" during "Podcast"), f
 
 ### Functional Requirements
 
-- **FR-001**: A drag (move or resize) MUST start only after the user presses and holds a task for 0.15s without moving more than a few pixels. This applies to mouse and touch.
-- **FR-002**: Moving the pointer before the 0.15s hold is over MUST scroll the board (touch) or do nothing (mouse), and MUST NOT move the task.
+- **FR-001**: A drag (move or resize) MUST start only after the user presses and holds a task for 0.1s without moving more than a few pixels. This applies to mouse and touch.
+- **FR-002**: Moving the pointer before the 0.1s hold is over MUST scroll the board and MUST NOT move the task (touch).
 - **FR-003**: When the hold completes, the task MUST be visibly highlighted as ready to drag until the drag ends.
 - **FR-004**: A tap or click with no hold and no movement MUST still open the task dialog.
 - **FR-005**: On drop, the board MUST show the dropped layout immediately and keep it while the change saves.
