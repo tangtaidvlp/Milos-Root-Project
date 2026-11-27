@@ -47,6 +47,7 @@ None. Branches `feat/F017-task-overlay` already exist in root, `ms-` and `ui-`.
 - [X] T015 Feedback: during a drag the dragged task stays out of the side-by-side lanes and floats full width, so other tasks never shift sideways (`EditingBoard.tsx`).
 - [X] T016 Feedback: drag time indicator — red start/end marks and duration in the time column while dragging (`EditingBoard.tsx`, `EditingBoard.module.css`; design `resources/drag-time-indicator.png`).
 - [X] T017 Feedback: Push mode pushes every task again, Overlay on or off (T002 rule); the Overlay-off rules apply in Normal mode only (`dragPreview.ts` + tests, spec FR-007).
+- [X] T018 Feedback: Push mode never swaps (the T002 half-way swap cut the push short); it keeps shifting the whole rest of the day (`dragPreview.ts` + tests; T002/F017 specs).
 
 ## Dependencies
 

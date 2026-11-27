@@ -14,7 +14,7 @@
 
 - Q: Which timeline boards get the new drag behaviour? → A: All timeline boards (Today, Default routine, Onboarding, Reflection compare). The circle view is out of scope.
 - Q: Does the 0.1s hold apply to every input or only to touch? → A: Touch only (phone browsers). With a mouse, the drag starts once the pointer moves past a few pixels; a click still opens the task.
-- Q: What if a Push mode move passes another task? → A: Once the dragged task has passed at least half of another task, it swaps with it instead of pushing (gap kept, other tasks stay put).
+- Q: What if a Push mode move passes another task? → A: Once the dragged task has passed at least half of another task, it swaps with it instead of pushing (gap kept, other tasks stay put). *(Removed by F017: Push mode only pushes; swapping is the Normal mode rule for Overlay-off tasks.)*
 - Q: What happens when a drag would put a 4th task in the same time slot? → A: Show an error that 4 tasks can't run in parallel. The change is not applied.
 - Q: How should Gap clear work? → A: Rename it to "Push mode", off by default. Turning it on tells the user that Push mode is on and changing a task's size or position pushes other tasks. Other tasks move live while dragging.
 - Q: Does Push mode push only down? → A: No, it pushes both ways. Dragging up pushes the tasks before the task up; dragging down pushes the tasks after it down.
@@ -89,12 +89,12 @@ Users can place tasks at the same time (for example "Lunch" during "Podcast"), f
 3. **Given** Push mode is on, **When** the user moves a task down by N minutes, **Then** every task that started at or after the dragged task's original start moves down by N minutes, animated live during the drag. Tasks before it stay put.
 4. **Given** Push mode is on, **When** the user moves a task up by N minutes, **Then** every task that started at or before the dragged task's original start moves up by N minutes, animated live during the drag. Tasks after it stay put.
 5. **Given** Push mode is on, **When** the user makes a task N minutes longer, **Then** every task that started at or after the task's original end moves down by N minutes. Making a task shorter moves no other task.
-6. **Given** Push mode is on, **When** the user drags a task so that it passes at least half of another task, **Then** the two swap places (the gap between them is kept, nothing else is pushed), and the dragged task shows in its new slot at once.
+6. **Given** Push mode is on, **When** the user drags a task so that it passes at least half of another task, **Then** the two swap places (the gap between them is kept, nothing else is pushed), and the dragged task shows in its new slot at once. *(Removed by F017: Push mode only pushes; swapping is the Normal mode rule for Overlay-off tasks.)*
 7. **Given** Push mode is on, **When** the pushed result would put 4 tasks at the same moment, **Then** the same error as Story 3 applies and nothing changes.
 
 ### Edge Cases
 
-- Push mode swap: exactly half passed counts as passed; passing several tasks swaps with each in turn, nearest first.
+- Push mode swap: exactly half passed counts as passed; passing several tasks swaps with each in turn, nearest first. *(Removed by F017: Push mode only pushes; swapping is the Normal mode rule for Overlay-off tasks.)*
 - The pointer is released or cancelled (for example by an incoming call or a tab switch) during the 0.1s hold or during a drag: no change is made and the highlight clears.
 - The user moves more than a few pixels before 0.1s: this counts as a scroll and no drag starts.
 - Push mode pushes a task past 24:00: it wraps to the next morning as an overnight task, as dragging does today (F011).
@@ -120,7 +120,7 @@ Users can place tasks at the same time (for example "Lunch" during "Podcast"), f
 - **FR-010**: During a drag that would break FR-009, the board MUST show that the drop isn't allowed there.
 - **FR-011**: "Gap clear" MUST be renamed "Push mode". It is off by default, and the toolbar MUST show whether it is on.
 - **FR-012**: Turning Push mode on MUST show a notice that Push mode is on and that changing a task's size or position pushes the other tasks.
-- **FR-013**: In Push mode, moving a task down by N minutes MUST shift every task that started at or after its original start down by N, and moving it up by N minutes MUST shift every task that started at or before its original start up by N. Making a task N minutes longer MUST shift every task that started at or after its original end down by N. Tasks on the other side of the drag MUST stay where they are, and making a task shorter MUST NOT move any other task. Exception: when a move passes at least half of another task (its midpoint is at or behind the dragged task's live leading edge), nothing is pushed; the dragged task swaps places with each passed task, nearest first, keeping the gap between each pair.
+- **FR-013**: In Push mode, moving a task down by N minutes MUST shift every task that started at or after its original start down by N, and moving it up by N minutes MUST shift every task that started at or before its original start up by N. Making a task N minutes longer MUST shift every task that started at or after its original end down by N. Tasks on the other side of the drag MUST stay where they are, and making a task shorter MUST NOT move any other task. Exception: when a move passes at least half of another task (its midpoint is at or behind the dragged task's live leading edge), nothing is pushed; the dragged task swaps places with each passed task, nearest first, keeping the gap between each pair. *(Removed by F017: Push mode only pushes; swapping is the Normal mode rule for Overlay-off tasks.)*
 - **FR-014**: In Push mode, the tasks being pushed MUST move live during the drag with a slide animation. The animation MUST be skipped when the user's device asks for reduced motion.
 - **FR-015**: FR-001 to FR-014 MUST apply to every timeline board: Today, Default routine, Onboarding and Reflection compare. The circle view keeps its current behaviour.
 - **FR-016**: Moving and resizing MUST still be possible without dragging, through the task dialog (as today).

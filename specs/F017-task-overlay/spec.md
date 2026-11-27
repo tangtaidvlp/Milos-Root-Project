@@ -15,7 +15,7 @@
 - Q: When does a swap start while dragging? → A: When the dragged task covers at least half of the other task (same rule as the T002 Push mode swap).
 - Q: Where does the dragged task land when the two durations differ? → A: The gap between the pair is kept (T002 swap rule), so a swap never creates a new overlap.
 - Q: Whose setting counts? → A: The dragged task's. An Overlay-on task dropped on an Overlay-off task simply overlaps.
-- Q: Push mode? → A: Push mode pushes every task, Overlay on or off, as in T002 (changed after feedback: the first rule, "Overlay-off tasks never push", made Push mode look broken since all tasks default to Overlay off).
+- Q: Push mode? → A: Push mode only pushes, every task, Overlay on or off; it never swaps, and it keeps shifting the whole rest of the day (T002 rule). Changed after feedback: \"Overlay-off never pushes\" made Push mode look broken, and the T002 swap cut every push short after half a task.
 - Q: Resize into the next task? → A: An Overlay-off task stops at the next task's start.
 - Q: Times typed in the dialog or set by Buddy? → A: Not checked; only dragging enforces the rule.
 - Q: Existing tasks? → A: All become Overlay off; existing overlaps are left as they are.
@@ -56,7 +56,7 @@ The user drags an Overlay-off task onto another task. Once it covers at least ha
 3. **Given** a swap is showing, **When** the user releases, **Then** A lands in B's old position (gap between them kept) and both are saved.
 4. **Given** a swap is showing, **When** the user drags A back off B (less than half), **Then** B returns to its own slot.
 5. **Given** A is dragged past several tasks, **When** it covers at least half of each, **Then** it swaps with each in turn, nearest first; other tasks do not move.
-6. **Given** Push mode is on, **When** an Overlay-off task is dragged, **Then** it swaps as above and nothing is pushed.
+6. **Given** Push mode is on, **When** any task is dragged, **Then** the rest of the day is pushed and nothing is swapped.
 
 ---
 
@@ -93,7 +93,7 @@ An Overlay-on task can still be dragged over other tasks (side by side, max 3 at
 - **FR-004**: When an Overlay-off task is moved and covers at least half of another task, that task MUST move into the dragged task's original slot immediately, while the dragged task keeps following the pointer.
 - **FR-005**: On release, the dragged task MUST land in the swapped task's old position with the gap between them kept (down: the dragged task ends where the other task ended; up: it starts where the other task started), and both MUST be saved.
 - **FR-006**: Passing several tasks MUST swap with each in turn, nearest first; tasks not passed MUST NOT move.
-- **FR-007**: FR-004–FR-006, FR-009 and FR-011 apply in Normal mode only. In Push mode every task, Overlay on or off, keeps the T002 Push behaviour (the rest of the day is pushed; a task passed by half is swapped).
+- **FR-007**: FR-004–FR-006, FR-009 and FR-011 apply in Normal mode only. In Push mode every task, Overlay on or off, is pushed (the rest of the day shifts, as in T002) and nothing is swapped.
 - **FR-008**: An Overlay-on task MUST keep the current behaviour: overlap in Normal mode, push in Push mode, max 3 tasks at the same moment.
 - **FR-009**: In Normal mode, resizing an Overlay-off task MUST stop its end at the start of the next task. In Push mode it pushes as today (no overlap is created).
 - **FR-012**: While a task is dragged (move or resize), the time column MUST show its start and end time with red marks and its duration between them (design: `resources/drag-time-indicator.png`); they disappear on release.

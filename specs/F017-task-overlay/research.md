@@ -10,7 +10,7 @@
 
 `TimedTask` gains `overlay?: boolean`. Only `overlay === false` uses the new rules; `true` or missing (Reality tasks) keeps T002 behaviour.
 
-- **Move** (Normal mode only; Push mode keeps T002 for every task): run the T002 `swapPassed` (half rule, gap kept, nearest first). Nothing is pushed.
+- **Move** (Normal mode only; Push mode pushes every task and never swaps): run the T002 `swapPassed` (half rule, gap kept, nearest first). Nothing is pushed.
   - Passed tasks: they move at once (preview).
   - Dropped slot of the dragged task: the swap result.
   - No task passed: dropped slot = live slot, then **edge stop** (FR-011): if it overlaps a task it did not overlap at its original slot, snap against that task's near edge (down: end = its start; up: start = its end). If the snapped slot still overlaps such a task or leaves 00:00–24:00, use the original slot.
