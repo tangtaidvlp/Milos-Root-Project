@@ -49,6 +49,7 @@ None. Branches `feat/F017-task-overlay` already exist in root, `ms-` and `ui-`.
 - [X] T017 Feedback: Push mode pushes every task again, Overlay on or off (T002 rule); the Overlay-off rules apply in Normal mode only (`dragPreview.ts` + tests, spec FR-007).
 - [X] T018 Feedback: Push mode never swaps (the T002 half-way swap cut the push short); it keeps shifting the whole rest of the day (`dragPreview.ts` + tests; T002/F017 specs).
 - [X] T019 Feedback: Push mode "push up" behind the front-end toggle `PUSH_UP_ENABLED` (`src/config/featureFlags.ts`), off for now; note in `AI-project-docs/bugs/low-impact.MD`.
+- [X] T020 Feedback: in Push mode the tasks below the dragged task follow it when it is dragged up too; with Push-up off, an Overlay-off task stops at the end of the task above (`dragPreview.ts` + tests; `EditingBoard.tsx` draws the dragged task at its preview slot in Push mode).
 
 ## Dependencies
 
