@@ -51,6 +51,7 @@ None. Branches `feat/F017-task-overlay` already exist in root, `ms-` and `ui-`.
 - [X] T019 Feedback: Push mode "push up" behind the front-end toggle `PUSH_UP_ENABLED` (`src/config/featureFlags.ts`), off for now; note in `AI-project-docs/bugs/low-impact.MD`.
 - [X] T020 Feedback: in Push mode the tasks below the dragged task follow it when it is dragged up too; with Push-up off, an Overlay-off task stops at the end of the task above (`dragPreview.ts` + tests; `EditingBoard.tsx` draws the dragged task at its preview slot in Push mode).
 - [X] T021 Feedback: overnight tasks behind the front-end toggle `OVERNIGHT_TASKS_ENABLED` (off): drag, resize, Push mode, circle view and the dialog keep a task within 24:00; existing overnight tasks are left as they are (`board/utils/overnight.ts`, `dragPreview.ts`, `EditingBoard.tsx`, `TaskEditModal.tsx`, `RadialDayChart.tsx`, e2e `today-board`); note in `AI-project-docs/bugs/low-impact.MD`.
+- [X] T022 Feedback: Push mode squeezes the gaps from the bottom up when a downward push reaches 24:00 (overlapping tasks move as one block), then shows "No space left to push" (`dragPreview.ts` `packDown` + tests, `EditingBoard.tsx`, e2e `today-board`).
 
 ## Dependencies
 

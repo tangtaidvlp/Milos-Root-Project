@@ -16,3 +16,4 @@ Run: backend `SPRING_PROFILES_ACTIVE=fast ./gradlew bootRun`, UI `pnpm dev`. Aut
 | 10 | Reflection Reality task dialog | No Overlay switch |
 | 11 | Phone: hold 0.1s and drag (as 4–5) | Same as desktop |
 | 12 | Drag or resize any task | Red start/end times and the duration show in the time column and follow the drag; gone on release |
+| 13 | Push mode: A 22:00–22:30, B 23:00–23:30; drag A down 2h | B stops at 23:30–24:00, A closes up to 23:00–23:30, "No space left to push" shows |
