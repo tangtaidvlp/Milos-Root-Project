@@ -1,0 +1,39 @@
+{
+  "status": "done",
+  "closed": "2026-11-27",
+  "outcome": "Both feedback items shipped (hold time, Push mode rule), later refined in F017; T002 merged to main (ui #10, ms #8, root #12).",
+  "saved": "2026-11-27",
+  "workItem": "T002 Improvement for UX at timeline change",
+  "branch": "feat/T002-timeline-drag-ux (root 017cc49, ms 79b5dda, ui 45d4c7d) - pushed, no PR",
+  "statusBeforeFeedback": "All 19 tasks done, Opus-reviewed, committed, pushed. Backend 239 tests, UI 345 unit tests + lint + build, e2e today-board 4/4, radial 3/3.",
+  "uncommittedUserChange": "Roadmap.md moved from specs/.done.F012-.../ to AI-project-docs/ - not ours, leave out of commits",
+  "newFeedback": {
+    "1_holdTime": "Reduce hold-to-drag from 0.3s to 0.15s",
+    "2_pushModeReplace": "In Push mode, when the dragged task is dragged over half the height of another task, swap (replace) them instead of continuing to push the 2nd next task"
+  },
+  "progress": "Analysis done, no code or docs changed yet for the feedback",
+  "design": {
+    "holdTime": "ui src/features/board/components/EditingBoard.tsx line 32: HOLD_TO_DRAG_MS = 300 -> 150. e2e quick-drag/hold-400ms test still valid.",
+    "pushModeReplace": {
+      "file": "ui src/features/board/utils/dragPreview.ts previewPositions() move branch (+ dragPreview.test.ts)",
+      "scope": "Push mode + move only. Normal mode and resize unchanged.",
+      "regime1_noTaskPassed": "Unchanged: moving down by d shifts every other task with start >= originalStart by d (up: start <= originalStart).",
+      "passedRule_down": "Candidates: others with start >= originalStart, midpoint > dragged original end, midpoint <= dragged LIVE end (liveStart + duration). Midpoints use ORIGINAL positions. Process in ascending midpoint order.",
+      "passedRule_up": "Candidates: others with start <= originalStart, midpoint < dragged original start, midpoint >= dragged LIVE start. Process nearest first (descending midpoint).",
+      "regime2_swap": "If any task passed: no pushing at all. Successive true swaps, gap between the pair is kept. Down: passed task starts at dragged task's current start; dragged task ends at passed task's original end. Up: passed task ends at dragged task's current end; dragged task starts at passed task's original start. Non-passed tasks stay put.",
+      "render": "Dragged task shows at its computed slot (preview = what is saved), so it snaps on swap; others animate.",
+      "bounds": "Clamp every computed start to 0..1435.",
+      "threshold": "'At least half' (>=) chosen over strict >; minor."
+    },
+    "docsToUpdate": "spec.md (clarification line, US1 0.3s, US4 + new acceptance scenario, FR-001/FR-002/FR-013, edge cases), research.md R1 (300ms) + R3 (swap rule), contracts/board-ui.md (300 ms), quickstart.md (row 2 '~0.3s', add swap check), tasks.md (add T020+), ui CLAUDE.md T002 bullet if it states 0.3s or push rule"
+  },
+  "workflowRules": [
+    "Sonnet subagent codes, Opus reviews, loop until approved",
+    "Fix only critical/high/medium findings; YAGNI; brief docs",
+    "Then rerun ui lint/test/build + e2e today-board, commit on the T002 branch (ui submodule then root pointer), push - same flow the user asked for T002"
+  ],
+  "reminders": [
+    "Local backend on :8080 still runs pre-T002 code; restart it for no-push + 409 cap",
+    "Touch behaviour unverified on a real phone (quickstart.md manual checks)"
+  ]
+}
