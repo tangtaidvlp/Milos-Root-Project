@@ -97,6 +97,7 @@ An Overlay-on task can still be dragged over other tasks (side by side, max 3 at
 - **FR-008**: An Overlay-on task MUST keep the current behaviour: overlap in Normal mode, push in Push mode, max 3 tasks at the same moment.
 - **FR-009**: In Normal mode, resizing an Overlay-off task MUST stop its end at the start of the next task. In Push mode it pushes as today (no overlap is created).
 - **FR-012**: While a task is dragged (move or resize), the time column MUST show its start and end time with red marks and its duration between them (design: `resources/drag-time-indicator.png`); they disappear on release.
+- **FR-013**: Overnight tasks are behind the front-end toggle `OVERNIGHT_TASKS_ENABLED`, off for now: dragging, resizing, Push mode, the circle view and the task dialog MUST keep a task within 24:00, except a task that already crosses midnight (left as it is). Decision tracked in `AI-project-docs/bugs/low-impact.MD`.
 - **FR-011**: An Overlay-off task released while covering less than half of another task MUST land against that task's edge; if that slot overlaps another task too, it MUST return to its original slot. Overlaps that already existed before the drag are ignored.
 - **FR-010**: Existing tasks MUST read as Overlay off; no existing task times are changed.
 
