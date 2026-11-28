@@ -82,6 +82,10 @@ Small marks every 15 minutes between the hour marks help users read times more p
 - **FR-008**: Text and icons MUST keep WCAG 2.2 AA contrast against their band colour in both modes.
 - **FR-009**: The day/night decoration MUST NOT be announced by screen readers (decorative only); the chart's accessible name stays as today.
 - **FR-010**: The centre circle MUST keep the plain surface colour; it no longer takes the current task's colour (the task pill inside it still does). Added on owner review.
+- **FR-011** (owner review): Task pieces on the circle MUST have slightly rounded corners (3 px) instead of fully round ends; very short tasks are small blocks.
+- **FR-012** (owner review): The current task MUST be filled in its own task colour with surface-colour text, on the timeline and on its circle label (no "Now" tag on the circle; label corners 8 px).
+- **FR-013** (owner review): Leader lines on the circle MUST use the task's own colour, 1 px wide.
+- **FR-014** (owner review): The task dialog's minutes field MUST step by 5 with its up/down buttons; any typed minute still saves.
 
 ## Success Criteria *(mandatory)*
 
