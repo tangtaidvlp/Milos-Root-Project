@@ -3,10 +3,10 @@
 
 
 # Incoming features
-## 1. A better view chart for overview of daily routine/default routine
+## [X] 1. A better view chart for overview of daily routine/default routine
   - I want it to be a 24-hour routine chart
   - 
-## 2. A "Personal Target" page for users to manage their personal goal, could be up to 3 goals, AI will based on these goals and give user better suggestion or what user expect at AI. (We will have what's their goal, what do they expect the AI to help them)  
+## [X] 2. A "Personal Target" page for users to manage their personal goal, could be up to 3 goals, AI will based on these goals and give user better suggestion or what user expect at AI. (We will have what's their goal, what do they expect the AI to help them)  
 - They can set AI tone their, something like below:  
 
 | Archetype | Core Vibe | Best Used For | Example Phrasing |
@@ -39,4 +39,6 @@ Evening (Decompression): Slower, reflective, and validating. Closes open loops s
 Streak-Break / Off-Track: Strictly non-punitive. Avoids guilt-tripping language ("You failed to...") in favor of forward-looking adjustments ("Resetting the baseline for tomorrow...").
 
 Are you designing the system persona and prompt behavior for a routine assistant app, or calibrating how you want to interact with one yourself?
+
+## [X] Undo feature
 
